@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8A85AA73-4FEC-4BA1-A8CD-485EEC7F7012}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TextualDBD</RootNamespace>
+    <AssemblyName>TextualDBD</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="TextualDB">
+      <HintPath>..\..\TextualDB\src\TextualDB\bin\Debug\TextualDB.exe</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Networking\ConnectionListener.cs" />
+    <Compile Include="Events\ClientConnectedEventArgs.cs" />
+    <Compile Include="Events\ClientDisconnectedEventArgs.cs" />
+    <Compile Include="Events\ClientMessageRecievedEventArgs.cs" />
+    <Compile Include="Interpreter\Token.cs" />
+    <Compile Include="Interpreter\TokenType.cs" />
+    <Compile Include="Interpreter\Tokenizer.cs" />
+    <Compile Include="Interpreter\Ast\AstNode.cs" />
+    <Compile Include="Interpreter\IVisitor.cs" />
+    <Compile Include="Interpreter\Ast\SelectNode.cs" />
+    <Compile Include="Interpreter\Ast\DropNode.cs" />
+    <Compile Include="Interpreter\Ast\CreateNode.cs" />
+    <Compile Include="Interpreter\Parser.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Networking\" />
+    <Folder Include="Events\" />
+    <Folder Include="Interpreter\" />
+    <Folder Include="Interpreter\Ast\" />
+  </ItemGroup>
+</Project>

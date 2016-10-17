@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextualDBD", "TextualDBD\TextualDBD.csproj", "{8A85AA73-4FEC-4BA1-A8CD-485EEC7F7012}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8A85AA73-4FEC-4BA1-A8CD-485EEC7F7012}.Debug|x86.ActiveCfg = Debug|x86
+		{8A85AA73-4FEC-4BA1-A8CD-485EEC7F7012}.Debug|x86.Build.0 = Debug|x86
+		{8A85AA73-4FEC-4BA1-A8CD-485EEC7F7012}.Release|x86.ActiveCfg = Release|x86
+		{8A85AA73-4FEC-4BA1-A8CD-485EEC7F7012}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = TextualDBD\TextualDBD.csproj
+	EndGlobalSection
+EndGlobal
