@@ -28,6 +28,39 @@ namespace TextualDBD.Interpreter
                         case '"':
                             scanString();
                             break;
+                        case '*':
+                            result.Add(Token.Create(TokenType.Identifier, ((char)readChar()).ToString()));
+                            break;
+                        case '|':
+                            readChar();
+                            if ((char)peekChar() == '|')
+                                readChar();
+                            result.Add(Token.Create(TokenType.Operation, "||"));
+                            break;
+                        case '&':
+                            readChar();
+                            if ((char)peekChar() == '&')
+                                readChar();
+                            result.Add(Token.Create(TokenType.Operation, "&&"));
+                            break;
+                        case '=':
+                            readChar();
+                            if ((char)peekChar() == '=')
+                                readChar();
+                            result.Add(Token.Create(TokenType.Comparison, "=="));
+                            break;
+                        case '>':
+                        case '<':
+                        case '!':
+                            char op = (char)readChar();
+                            if ((char)peekChar() == '=')
+                            {
+                                readChar();
+                                result.Add(Token.Create(TokenType.Comparison, op + "" + (char)readChar()));
+                            }
+                            else
+                                result.Add(Token.Create(TokenType.Comparison, op.ToString()));
+                            break;
                         default:
                             Console.WriteLine("Unknown char {0}, ASCII value {1}!", (char)peekChar(), readChar());
                             break;
