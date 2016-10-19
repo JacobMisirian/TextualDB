@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="TextualDB">
-      <HintPath>..\..\TextualDB\src\TextualDB\bin\Debug\TextualDB.exe</HintPath>
+      <HintPath>..\TextualDB\bin\Debug\TextualDB.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -42,6 +42,7 @@
     <Compile Include="Interpreter\Ast\BinaryExpressionNode.cs" />
     <Compile Include="Interpreter\Ast\IdentifierNode.cs" />
     <Compile Include="Interpreter\Ast\StringNode.cs" />
+    <Compile Include="Interpreter\CommandEvaluator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Networking\Client.cs" />

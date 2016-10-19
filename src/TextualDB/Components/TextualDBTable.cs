@@ -97,6 +97,13 @@ namespace TextualDB.Components
             return result;
         }
 
+        public int ResolveColumnNumber(string column)
+        {
+            if (!Columns.Contains(column))
+                throw new ColumnOutOfRangeException(-1, this);
+            return Columns.IndexOf(column);
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

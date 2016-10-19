@@ -1,5 +1,7 @@
 using System;
 
+using TextualDB;
+
 using TextualDBD.Interpreter;
 using TextualDBD.Interpreter.Ast;
 
@@ -9,8 +11,15 @@ namespace TextualDBD
     {
         public static void Main(string[] args)
         {
-            var ast = new Parser().Parse(new Tokenizer().Scan("select Names from People"));
-            
+            Tokenizer tokenizer = new Tokenizer();
+            Parser parser = new Parser();
+            CommandEvaluator evaluator = new CommandEvaluator(args[0]);
+
+            while (true)
+            {
+                Console.Write(">");
+                Console.WriteLine(evaluator.Execute(parser.Parse(tokenizer.Scan(Console.ReadLine()))));
+            }
         }
 
         static int indent = 0;

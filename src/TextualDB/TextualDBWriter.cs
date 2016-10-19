@@ -14,13 +14,9 @@ namespace TextualDB
         private StreamWriter writer;
         private TextualDBDatabase database;
 
-        public TextualDBWriter(TextualDBDatabase database)
+        public void Write(TextualDBDatabase database, string filePath)
         {
             this.database = database;
-        }
-
-        public void Write(string filePath)
-        {
             writer = new StreamWriter(filePath);
 
             foreach (var table in database.Tables.Values)

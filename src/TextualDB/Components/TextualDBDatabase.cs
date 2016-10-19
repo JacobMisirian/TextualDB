@@ -45,5 +45,10 @@ namespace TextualDB.Components
         {
             return Select(table).SelectWhere(column, value);
         }
+
+        public int ResolveColumnNumber(string table, string column)
+        {
+            return Select(table).ResolveColumnNumber(column);
+        }
     }
 }

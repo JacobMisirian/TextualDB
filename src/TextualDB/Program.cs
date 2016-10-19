@@ -11,7 +11,7 @@ namespace TextualDB
         static void Main(string[] args)
         {
             var db = new TextualDBReader(args[0]).Read();
-            new TextualDBWriter(db).Write(args[1]);
+            new TextualDBWriter().Write(db, args[1]);
         }
     }
 }
