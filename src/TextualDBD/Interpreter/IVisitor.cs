@@ -10,6 +10,7 @@ namespace TextualDBD.Interpreter
         void Accept(BinaryExpressionNode node);
         void Accept(CreateNode node);
         void Accept(IdentifierNode node);
+        void Accept(InsertNode node);
         void Accept(SelectNode node);
         void Accept(StringNode node);
     }

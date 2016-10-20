@@ -61,6 +61,9 @@ namespace TextualDBD.Interpreter
                             else
                                 result.Add(Token.Create(TokenType.Comparison, op.ToString()));
                             break;
+                        case ',':
+                            result.Add(Token.Create(TokenType.Comma, ((char)readChar()).ToString()));
+                            break;
                         default:
                             Console.WriteLine("Unknown char {0}, ASCII value {1}!", (char)peekChar(), readChar());
                             break;

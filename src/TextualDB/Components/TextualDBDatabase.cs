@@ -29,6 +29,14 @@ namespace TextualDB.Components
             return this;
         }
 
+        public TextualDBDatabase Drop(string table)
+        {
+            if (!Tables.ContainsKey(table))
+                throw new TableNotFoundException(table, this);
+            Tables.Remove(table);
+            return this;
+        }
+
         public TextualDBTable Select(string table)
         {
             if (!Tables.ContainsKey(table))

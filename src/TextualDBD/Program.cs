@@ -2,6 +2,7 @@ using System;
 
 using TextualDB;
 
+using TextualDBD.Exceptions;
 using TextualDBD.Interpreter;
 using TextualDBD.Interpreter.Ast;
 
@@ -17,8 +18,20 @@ namespace TextualDBD
 
             while (true)
             {
-                Console.Write(">");
-                Console.WriteLine(evaluator.Execute(parser.Parse(tokenizer.Scan(Console.ReadLine()))));
+                try
+                {
+                    Console.Write(">");
+                    Console.WriteLine(evaluator.Execute(parser.Parse(tokenizer.Scan(Console.ReadLine()))));
+                    evaluator.WriteChanges();
+                }
+                catch (ParserExpectedTokenException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (ParserUnexpectedTokenException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 

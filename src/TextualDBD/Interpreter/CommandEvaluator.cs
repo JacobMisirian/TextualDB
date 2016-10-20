@@ -16,12 +16,14 @@ namespace TextualDBD.Interpreter
         public TextualDBReader Reader { get; private set; }
         public TextualDBWriter Writer { get; private set; }
         public TextualDBDatabase Database { get; private set; }
+        public string DatabaseFile { get; private set; }
 
         public CommandEvaluator(string databaseFile)
         {
             Reader = new TextualDBReader(databaseFile);
             Writer = new TextualDBWriter();
             Database = Reader.Read();
+            DatabaseFile = databaseFile;
         }
 
         private StringBuilder response;
@@ -40,8 +42,14 @@ namespace TextualDBD.Interpreter
             return response.ToString();
         }
 
+        public void WriteChanges(string databaseFile = "")
+        {
+            Writer.Write(Database, databaseFile == string.Empty ? DatabaseFile : databaseFile);
+        }
+
         public void Accept(DropNode node)
         {
+            Database.Drop(node.Table);
         }
         public void Accept(BinaryExpressionNode node)
         {
@@ -70,6 +78,20 @@ namespace TextualDBD.Interpreter
         public void Accept(IdentifierNode node)
         {
             stack.Push(tableStack.Peek().ResolveColumnNumber(node.Identifier).ToString());
+        }
+        public void Accept(InsertNode node)
+        {
+            var table = Database.Select(node.Table);
+            if (node.Where == null)
+            {
+                string[] row = new string[table.Columns.Count];
+                foreach (var value in node.Values)
+                    row[table.ResolveColumnNumber(value.Column)] = value.Value;
+                for (int i = 0; i < row.Length; i++)
+                    if (row[i] == null)
+                        row[i] = string.Empty;
+                table.AddRow(row);
+            }
         }
         public void Accept(SelectNode node)
         {

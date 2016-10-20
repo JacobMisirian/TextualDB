@@ -41,6 +41,7 @@
     <Compile Include="Exceptions\ParserUnexpectedTokenException.cs" />
     <Compile Include="Interpreter\Ast\BinaryExpressionNode.cs" />
     <Compile Include="Interpreter\Ast\IdentifierNode.cs" />
+    <Compile Include="Interpreter\Ast\InsertNode.cs" />
     <Compile Include="Interpreter\Ast\StringNode.cs" />
     <Compile Include="Interpreter\CommandEvaluator.cs" />
     <Compile Include="Program.cs" />

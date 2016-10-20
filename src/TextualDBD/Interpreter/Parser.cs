@@ -21,12 +21,40 @@ namespace TextualDBD.Interpreter
 
         private AstNode parseStatement()
         {
-            if (matchToken(TokenType.Identifier, "select"))
+            if (matchToken(TokenType.Identifier, "drop"))
+                return parseDrop();
+            else if (matchToken(TokenType.Identifier, "insert"))
+                return parseInsert();
+            else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
             else
                 return parseExpression();
         }
 
+        private DropNode parseDrop()
+        {
+            expectToken(TokenType.Identifier, "drop");
+            string table = expectToken(TokenType.Identifier).Value;
+            return new DropNode(table);
+        }
+        private InsertNode parseInsert()
+        {
+            expectToken(TokenType.Identifier, "insert");
+            string table = expectToken(TokenType.Identifier).Value;
+            List<InsertValue> values = new List<InsertValue>();
+            while (!Eof && !matchToken(TokenType.Identifier, "where"))
+            {
+                string column = expectToken(TokenType.Identifier).Value;
+                expectToken(TokenType.Comparison, "==");
+                string value = Tokens[position++].Value;
+                values.Add(new InsertValue(column, value));
+                acceptToken(TokenType.Comma);
+            }
+            AstNode where = null;
+            if (acceptToken(TokenType.Identifier, "where"))
+                where = parseExpression();
+            return new InsertNode(table, values, where);
+        }
         private SelectNode parseSelect()
         {
             expectToken(TokenType.Identifier, "select");

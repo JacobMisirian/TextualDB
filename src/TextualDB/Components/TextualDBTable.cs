@@ -50,6 +50,16 @@ namespace TextualDB.Components
             return this;
         }
 
+        public TextualDBTable AddRow(params string[] data)
+        {
+            return AddRow(new TextualDBRow(data));
+        }
+        public TextualDBTable AddRow(TextualDBRow row)
+        {
+            Rows.Add(row);
+            return this;
+        }
+
         public TextualDBTable RemoveColumn(string name)
         {
             return RemoveColumn(Columns.IndexOf(name));

@@ -52,7 +52,8 @@ namespace TextualDB
             {
                 burnWhiteSpace();
                 table.Columns.Add(readUntil('|').Trim());
-                reader.Read();
+                if (reader.Peek() == '|')
+                    reader.Read();
             }
             burnWhiteSpace();
         }
@@ -63,7 +64,8 @@ namespace TextualDB
             while ((char)reader.Peek() != '\n')
             {
                 row.Add(readUntil('|').Trim());
-                reader.Read();
+                if (reader.Peek() == '|')
+                    reader.Read();
             }
             burnWhiteSpace();
             return row;
