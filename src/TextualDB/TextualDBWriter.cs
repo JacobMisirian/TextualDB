@@ -20,7 +20,7 @@ namespace TextualDB
             writer = new StreamWriter(filePath);
 
             foreach (var table in database.Tables.Values)
-                writer.WriteLine(table.ToString());
+                writer.Write(string.Format("{0}\n", table.ToString()));
             writer.Flush();
             writer.Close();
         }

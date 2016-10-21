@@ -120,9 +120,9 @@ namespace TextualDB.Components
             sb.AppendFormat("{0}:\n", Name);
             foreach (var column in Columns)
                 sb.AppendFormat("{0} | ", column);
-            sb.AppendLine();
+            sb.Append("\n");
             foreach (var row in Rows)
-                sb.AppendLine(row.ToString());
+                sb.AppendFormat("{0}\n", row.ToString());
             sb.Append("?");
             return sb.ToString();
         }

@@ -48,13 +48,9 @@ namespace TextualDB
 
         private void readColumnDeclarations(TextualDBTable table)
         {
-            while ((char)reader.Peek() != '\n')
-            {
-                burnWhiteSpace();
-                table.Columns.Add(readUntil('|').Trim());
-                if (reader.Peek() == '|')
-                    reader.Read();
-            }
+            foreach (string col in reader.ReadLine().Split('|'))
+                if (col.Trim() != string.Empty)
+                    table.AddColumn(col.Trim());
             burnWhiteSpace();
         }
 
@@ -63,8 +59,10 @@ namespace TextualDB
             TextualDBRow row = new TextualDBRow();
             while ((char)reader.Peek() != '\n')
             {
-                row.Add(readUntil('|').Trim());
+                row.Add(readUntil('|'). Trim());
                 if (reader.Peek() == '|')
+                    reader.Read();
+                if (reader.Peek() == ' ')
                     reader.Read();
             }
             burnWhiteSpace();

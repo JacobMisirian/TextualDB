@@ -92,6 +92,20 @@ namespace TextualDBD.Interpreter
                         row[i] = string.Empty;
                 table.AddRow(row);
             }
+            else
+            {
+                tableStack.Push(table);
+                foreach (var row in table.Rows)
+                {
+                    rowStack.Push(row);
+                    node.Where.Visit(this);
+                    if (stack.Pop() == "True")
+                        foreach (var value in node.Values)
+                            row.Data[table.ResolveColumnNumber(value.Column)] = value.Value;
+                    rowStack.Pop();
+                }
+                tableStack.Pop();
+            }
         }
         public void Accept(SelectNode node)
         {
