@@ -1,6 +1,7 @@
 using System;
 
 using TextualDB;
+using TextualDB.Exceptions;
 
 using TextualDBD.Exceptions;
 using TextualDBD.Interpreter;
@@ -29,6 +30,14 @@ namespace TextualDBD
                     Console.WriteLine(ex.Message);
                 }
                 catch (ParserUnexpectedTokenException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (TableNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (ColumnOutOfRangeException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }

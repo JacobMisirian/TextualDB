@@ -21,7 +21,9 @@ namespace TextualDBD.Interpreter
 
         private AstNode parseStatement()
         {
-            if (matchToken(TokenType.Identifier, "drop"))
+            if (matchToken(TokenType.Identifier, "create"))
+                return parseCreate();
+            else if (matchToken(TokenType.Identifier, "drop"))
                 return parseDrop();
             else if (matchToken(TokenType.Identifier, "insert"))
                 return parseInsert();
@@ -31,15 +33,51 @@ namespace TextualDBD.Interpreter
                 return parseExpression();
         }
 
-        private DropNode parseDrop()
+        private AstNode parseCreate()
+        {
+            expectToken(TokenType.Identifier, "create");
+            if (acceptToken(TokenType.Identifier, "table"))
+            {
+                string table = expectToken(TokenType.Identifier).Value;
+                List<string> columns = new List<string>();
+                expectToken(TokenType.Identifier, "with");
+                while (!Eof)
+                {
+                    columns.Add(expectToken(TokenType.Identifier).Value);
+                    acceptToken(TokenType.Comma);
+                }
+                return new CreateTableNode(table, columns);
+            }
+            else if (acceptToken(TokenType.Identifier, "column"))
+            {
+                string column = expectToken(TokenType.Identifier).Value;
+                int pos = -1;
+                if (acceptToken(TokenType.Identifier, "at"))
+                    pos = Convert.ToInt32(expectToken(TokenType.Identifier).Value);
+                expectToken(TokenType.Identifier, "in");
+                return new CreateColumnNode(expectToken(TokenType.Identifier).Value, column, pos);
+            }
+            expectToken(TokenType.Identifier, "table or column");
+            return null;
+        }
+        private AstNode parseDrop()
         {
             expectToken(TokenType.Identifier, "drop");
-            string table = expectToken(TokenType.Identifier).Value;
-            return new DropNode(table);
+            if (acceptToken(TokenType.Identifier, "table"))
+                return new DropTableNode(expectToken(TokenType.Identifier).Value);
+            else if (acceptToken(TokenType.Identifier, "column"))
+            {
+                string column = expectToken(TokenType.Identifier).Value;
+                expectToken(TokenType.Identifier, "in");
+                return new DropColumnNode(expectToken(TokenType.Identifier).Value, column);
+            }
+            expectToken(TokenType.Identifier, "table or column");
+            return null;
         }
         private InsertNode parseInsert()
         {
             expectToken(TokenType.Identifier, "insert");
+            acceptToken(TokenType.Identifier, "into");
             string table = expectToken(TokenType.Identifier).Value;
             List<InsertValue> values = new List<InsertValue>();
             while (!Eof && !matchToken(TokenType.Identifier, "where"))

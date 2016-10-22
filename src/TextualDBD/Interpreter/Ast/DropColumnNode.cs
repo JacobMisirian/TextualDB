@@ -1,17 +1,19 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace TextualDBD.Interpreter.Ast
 {
-    public class CreateNode: AstNode
+    public class DropColumnNode: AstNode
     {
+        public string Column { get; private set; }
         public string Table { get; private set; }
-        public List<string> Columns { get; private set; }
 
-        public CreateNode(string table, List<string> columns)
+        public DropColumnNode(string table, string column)
         {
             Table = table;
-            Columns = columns;
+            Column = column;
         }
 
         public override void Visit(IVisitor visitor)
@@ -25,4 +27,3 @@ namespace TextualDBD.Interpreter.Ast
         }
     }
 }
-

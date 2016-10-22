@@ -32,7 +32,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="TextualDB">
+    <Reference Include="TextualDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\TextualDB\bin\Debug\TextualDB.exe</HintPath>
     </Reference>
   </ItemGroup>
@@ -40,6 +41,8 @@
     <Compile Include="Exceptions\ParserExpectedTokenException.cs" />
     <Compile Include="Exceptions\ParserUnexpectedTokenException.cs" />
     <Compile Include="Interpreter\Ast\BinaryExpressionNode.cs" />
+    <Compile Include="Interpreter\Ast\CreateColumnNode.cs" />
+    <Compile Include="Interpreter\Ast\DropColumnNode.cs" />
     <Compile Include="Interpreter\Ast\IdentifierNode.cs" />
     <Compile Include="Interpreter\Ast\InsertNode.cs" />
     <Compile Include="Interpreter\Ast\StringNode.cs" />
@@ -57,8 +60,8 @@
     <Compile Include="Interpreter\Ast\AstNode.cs" />
     <Compile Include="Interpreter\IVisitor.cs" />
     <Compile Include="Interpreter\Ast\SelectNode.cs" />
-    <Compile Include="Interpreter\Ast\DropNode.cs" />
-    <Compile Include="Interpreter\Ast\CreateNode.cs" />
+    <Compile Include="Interpreter\Ast\DropTableNode.cs" />
+    <Compile Include="Interpreter\Ast\CreateTableNode.cs" />
     <Compile Include="Interpreter\Parser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

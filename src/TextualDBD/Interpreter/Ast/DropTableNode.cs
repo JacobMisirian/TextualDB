@@ -2,11 +2,11 @@ using System;
 
 namespace TextualDBD.Interpreter.Ast
 {
-    public class DropNode: AstNode
+    public class DropTableNode: AstNode
     {
         public string Table { get; private set; }
 
-        public DropNode(string table)
+        public DropTableNode(string table)
         {
             Table = table;
         }

@@ -47,10 +47,6 @@ namespace TextualDBD.Interpreter
             Writer.Write(Database, databaseFile == string.Empty ? DatabaseFile : databaseFile);
         }
 
-        public void Accept(DropNode node)
-        {
-            Database.Drop(node.Table);
-        }
         public void Accept(BinaryExpressionNode node)
         {
             node.Right.Visit(this);
@@ -62,18 +58,46 @@ namespace TextualDBD.Interpreter
                     stack.Push((stack.Pop() == "True" && stack.Pop() == "True").ToString());
                     break;
                 case BinaryExpressionType.Equality:
-                    string part1 = rowStack.Peek().Data[Convert.ToInt32(stack.Pop())];
-                    string part2 = stack.Pop().ToString();
-                    stack.Push((part1 == part2).ToString());
+                    stack.Push((rowStack.Peek().Data[Convert.ToInt32(stack.Pop())] == stack.Pop()).ToString());
+                    break;
+                case BinaryExpressionType.GreaterThan:
+                    stack.Push((Convert.ToDouble(rowStack.Peek().Data[Convert.ToInt32(stack.Pop())]) > Convert.ToDouble(stack.Pop())).ToString());
+                    break;
+                case BinaryExpressionType.GreaterThanOrEqual:
+                    stack.Push((Convert.ToDouble(rowStack.Peek().Data[Convert.ToInt32(stack.Pop())]) >= Convert.ToDouble(stack.Pop())).ToString());
+                    break;
+                case BinaryExpressionType.LesserThan:
+                    stack.Push((Convert.ToDouble(rowStack.Peek().Data[Convert.ToInt32(stack.Pop())]) < Convert.ToDouble(stack.Pop())).ToString());
+                    break;
+                case BinaryExpressionType.LesserThanOrEqual:
+                    stack.Push((Convert.ToDouble(rowStack.Peek().Data[Convert.ToInt32(stack.Pop())]) <= Convert.ToDouble(stack.Pop())).ToString());
+                    break;
+                case BinaryExpressionType.NotEqual:
+                    stack.Push((rowStack.Peek().Data[Convert.ToInt32(stack.Pop())] != stack.Pop()).ToString());
                     break;
                 case BinaryExpressionType.Or:
                     stack.Push((stack.Pop() == "True" || stack.Pop() == "True").ToString());
                     break;
             }
         }
-        public void Accept(CreateNode node)
+        public void Accept(CreateColumnNode node)
         {
-
+            if (node.Position == -1)
+                Database.Select(node.Table).AddColumn(node.Column);
+            else
+                Database.Select(node.Table).AddColumn(node.Column, node.Position);
+        }
+        public void Accept(CreateTableNode node)
+        {
+            Database.Add(new TextualDBTable(node.Table, node.Columns));
+        }
+        public void Accept(DropColumnNode node)
+        {
+            Database.Select(node.Table).RemoveColumn(Database.ResolveColumnNumber(node.Table, node.Column));
+        }
+        public void Accept(DropTableNode node)
+        {
+            Database.Drop(node.Table);
         }
         public void Accept(IdentifierNode node)
         {
