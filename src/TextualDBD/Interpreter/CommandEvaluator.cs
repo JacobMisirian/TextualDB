@@ -93,7 +93,7 @@ namespace TextualDBD.Interpreter
         }
         public void Accept(DropColumnNode node)
         {
-            Database.Select(node.Table).RemoveColumn(Database.ResolveColumnNumber(node.Table, node.Column));
+            Database.Select(node.Table).RemoveColumn(node.Column);
         }
         public void Accept(DropTableNode node)
         {
@@ -150,6 +150,16 @@ namespace TextualDBD.Interpreter
                 }
                 tableStack.Pop();
             }
+        }
+        public void Accept(ShowColumnsNode node)
+        {
+            foreach (string column in Database.Select(node.Table).Columns)
+                response.AppendFormat("{0} | ", column);
+        }
+        public void Accept(ShowTablesNode node)
+        {
+            foreach (var table in Database.Tables.Keys)
+                response.AppendFormat("{0}:\n?", table);
         }
         public void Accept(StringNode node)
         {

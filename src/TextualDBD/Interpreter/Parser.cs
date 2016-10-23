@@ -29,6 +29,8 @@ namespace TextualDBD.Interpreter
                 return parseInsert();
             else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
+            else if (matchToken(TokenType.Identifier, "show"))
+                return parseShow();
             else
                 return parseExpression();
         }
@@ -102,6 +104,19 @@ namespace TextualDBD.Interpreter
             if (acceptToken(TokenType.Identifier, "where"))
                 return new SelectNode(column, table, parseExpression());
             return new SelectNode(column, table, null);
+        }
+        private AstNode parseShow()
+        {
+            expectToken(TokenType.Identifier, "show");
+            if (acceptToken(TokenType.Identifier, "columns"))
+            {
+                acceptToken(TokenType.Identifier, "in");
+                return new ShowColumnsNode(expectToken(TokenType.Identifier).Value);
+            }
+            else if (acceptToken(TokenType.Identifier, "tables"))
+                return new ShowTablesNode();
+            expectToken(TokenType.Identifier, "columns or tables");
+            return null;
         }
 
         private AstNode parseExpression()

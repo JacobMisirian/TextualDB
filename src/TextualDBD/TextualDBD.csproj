@@ -40,11 +40,15 @@
   <ItemGroup>
     <Compile Include="Exceptions\ParserExpectedTokenException.cs" />
     <Compile Include="Exceptions\ParserUnexpectedTokenException.cs" />
+    <Compile Include="Interfaces\NetUI.cs" />
+    <Compile Include="Interfaces\TUI.cs" />
     <Compile Include="Interpreter\Ast\BinaryExpressionNode.cs" />
     <Compile Include="Interpreter\Ast\CreateColumnNode.cs" />
     <Compile Include="Interpreter\Ast\DropColumnNode.cs" />
     <Compile Include="Interpreter\Ast\IdentifierNode.cs" />
     <Compile Include="Interpreter\Ast\InsertNode.cs" />
+    <Compile Include="Interpreter\Ast\ShowColumnsNode.cs" />
+    <Compile Include="Interpreter\Ast\ShowTablesNode.cs" />
     <Compile Include="Interpreter\Ast\StringNode.cs" />
     <Compile Include="Interpreter\CommandEvaluator.cs" />
     <Compile Include="Program.cs" />

@@ -37,6 +37,8 @@ namespace TextualDB.Components
         {
             if (Columns.Contains(name))
                 throw new ColumnAlreadyExistsException(name, this);
+            foreach (var row in Rows)
+                row.Data.Add("");
             Columns.Add(name);
             return this;
         }

@@ -9,8 +9,8 @@ namespace TextualDBD.Networking
     public class Client
     {
         public TcpClient TcpClient { get; private set; }
-        public StreamReader StreamReader { get; private set; }
-        public StreamWriter StreamWriter { get; private set; }
+        public BinaryReader BinaryReader { get; private set; }
+        public BinaryWriter BinaryWriter { get; private set; }
 
         public Thread SendThread{ get; set; }
         public Thread ListenThread { get; set; }
@@ -20,19 +20,19 @@ namespace TextualDBD.Networking
         public Client(TcpClient client)
         {
             TcpClient = client;
-            StreamReader = new StreamReader(client.GetStream());
-            StreamWriter = new StreamWriter(client.GetStream());
+            BinaryReader = new BinaryReader(client.GetStream());
+            BinaryWriter = new BinaryWriter(client.GetStream());
         }
 
         public void WriteLine(string text)
         {
-            StreamWriter.WriteLine(text);
-            StreamWriter.Flush();
+            BinaryWriter.Write(text);
+            BinaryWriter.Flush();
         }
 
         public string ReadLine()
         {
-            return StreamReader.ReadLine();
+            return BinaryReader.ReadString();
         }
     }
 }

@@ -14,6 +14,8 @@ namespace TextualDBD.Interpreter
         void Accept(IdentifierNode node);
         void Accept(InsertNode node);
         void Accept(SelectNode node);
+        void Accept(ShowColumnsNode node);
+        void Accept(ShowTablesNode node);
         void Accept(StringNode node);
     }
 }
