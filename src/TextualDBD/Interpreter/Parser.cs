@@ -55,7 +55,7 @@ namespace TextualDBD.Interpreter
                 string column = expectToken(TokenType.Identifier).Value;
                 int pos = -1;
                 if (acceptToken(TokenType.Identifier, "at"))
-                    pos = Convert.ToInt32(expectToken(TokenType.Identifier).Value);
+                    pos = Convert.ToInt32(expectToken(TokenType.Number).Value);
                 expectToken(TokenType.Identifier, "in");
                 return new CreateColumnNode(expectToken(TokenType.Identifier).Value, column, pos);
             }
@@ -95,15 +95,29 @@ namespace TextualDBD.Interpreter
                 where = parseExpression();
             return new InsertNode(table, values, where);
         }
-        private SelectNode parseSelect()
+        private AstNode parseSelect()
         {
             expectToken(TokenType.Identifier, "select");
             string column = expectToken(TokenType.Identifier).Value;
             expectToken(TokenType.Identifier, "from");
-            string table = expectToken(TokenType.Identifier).Value;
-            if (acceptToken(TokenType.Identifier, "where"))
-                return new SelectNode(column, table, parseExpression());
-            return new SelectNode(column, table, null);
+            if (acceptToken(TokenType.Identifier, "row"))
+            {
+                acceptToken(TokenType.Identifier, "at");
+                int start = Convert.ToInt32(expectToken(TokenType.Number).Value);
+                int end = acceptToken(TokenType.Identifier, "through") ? Convert.ToInt32(expectToken(TokenType.Number).Value) : -1;
+                expectToken(TokenType.Identifier, "from");
+                string table = expectToken(TokenType.Identifier).Value;
+                if (acceptToken(TokenType.Identifier, "where"))
+                    return new SelectRowNode(table, column, start, end, parseExpression());
+                return new SelectRowNode(table, column, start, end, null);
+            }
+            else
+            {
+                string table = expectToken(TokenType.Identifier).Value;
+                if (acceptToken(TokenType.Identifier, "where"))
+                    return new SelectNode(column, table, parseExpression());
+                return new SelectNode(column, table, null);
+            }
         }
         private AstNode parseShow()
         {

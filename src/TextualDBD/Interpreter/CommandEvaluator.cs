@@ -151,6 +151,32 @@ namespace TextualDBD.Interpreter
                 tableStack.Pop();
             }
         }
+        public void Accept(SelectRowNode node)
+        {
+            int column = node.Column != "*" ? Database.ResolveColumnNumber(node.Table, node.Column) : -1;
+            var table = Database.Select(node.Table);
+            List<TextualDBRow> rows = new List<TextualDBRow>();
+            int end = node.UseRowRange ? node.RowEnd : node.RowStart;
+            for (int i = node.RowStart; i <= end; i++)
+                rows.Add(table.Rows[i]);
+            if (node.Where != null)
+            {
+                tableStack.Push(table);
+                for (int i = 0; i < table.Rows.Count; i++)
+                {
+                    var row = table.Rows[i];
+                    rowStack.Push(row);
+                    node.Where.Visit(this);
+                    if (stack.Pop() == "False")
+                        rows.Remove(row);
+                    rowStack.Pop();
+                }
+                tableStack.Pop();
+            }
+
+            foreach (var row in rows)
+                response.AppendLine(column != -1 ? row.Data[column] : row.ToString());
+        }
         public void Accept(ShowColumnsNode node)
         {
             foreach (string column in Database.Select(node.Table).Columns)

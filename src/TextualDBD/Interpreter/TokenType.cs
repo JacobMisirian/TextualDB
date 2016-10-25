@@ -8,6 +8,7 @@ namespace TextualDBD.Interpreter
         Comma,
         Comparison,
         Identifier,
+        Number,
         OpenParentheses,
         Operation,
         String

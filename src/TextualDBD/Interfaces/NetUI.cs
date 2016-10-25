@@ -46,7 +46,6 @@ namespace TextualDBD.Interfaces
         }
         private static void listener_ClientMessageRecieved(object sender, ClientMessageRecievedEventArgs e)
         {
-            Console.WriteLine(e.Message);
             e.Client.WriteLine(interpreter.Execute(parser.Parse(tokenizer.Scan(e.Message))));
         }
     }

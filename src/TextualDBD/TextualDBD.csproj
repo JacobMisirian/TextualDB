@@ -32,8 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="TextualDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="TextualDB">
       <HintPath>..\TextualDB\bin\Debug\TextualDB.exe</HintPath>
     </Reference>
   </ItemGroup>
@@ -49,7 +48,6 @@
     <Compile Include="Interpreter\Ast\InsertNode.cs" />
     <Compile Include="Interpreter\Ast\ShowColumnsNode.cs" />
     <Compile Include="Interpreter\Ast\ShowTablesNode.cs" />
-    <Compile Include="Interpreter\Ast\StringNode.cs" />
     <Compile Include="Interpreter\CommandEvaluator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -67,6 +65,8 @@
     <Compile Include="Interpreter\Ast\DropTableNode.cs" />
     <Compile Include="Interpreter\Ast\CreateTableNode.cs" />
     <Compile Include="Interpreter\Parser.cs" />
+    <Compile Include="Interpreter\Ast\Stringnode.cs" />
+    <Compile Include="Interpreter\Ast\SelectRowNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

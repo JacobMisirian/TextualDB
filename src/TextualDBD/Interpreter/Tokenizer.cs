@@ -19,8 +19,10 @@ namespace TextualDBD.Interpreter
             while (peekChar() != -1)
             {
                 whiteSpace();
-                if (char.IsLetterOrDigit((char)peekChar()))
+                if (char.IsLetter((char)peekChar()))
                     scanIdentifier();
+                else if (char.IsDigit((char)peekChar()))
+                    scanNumber();
                 else
                 {
                     switch ((char)peekChar())
@@ -87,6 +89,16 @@ namespace TextualDBD.Interpreter
                 sb.Append((char)readChar());
 
             result.Add(Token.Create(TokenType.Identifier, sb.ToString()));
+        }
+
+        private void scanNumber()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            while (char.IsDigit((char)peekChar()) || (char)peekChar() == '.')
+                sb.Append((char)readChar());
+
+            result.Add(Token.Create(TokenType.Number, sb.ToString()));
         }
 
         private void scanString()
