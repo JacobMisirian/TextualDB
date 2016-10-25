@@ -7,6 +7,7 @@ using TextualDB;
 using TextualDB.Components;
 using TextualDB.Exceptions;
 
+using TextualDBD.Exceptions;
 using TextualDBD.Interpreter.Ast;
 
 namespace TextualDBD.Interpreter
@@ -37,8 +38,34 @@ namespace TextualDBD.Interpreter
             tableStack = new Stack<TextualDBTable>();
             rowStack = new Stack<TextualDBRow>();
             response = new StringBuilder();
-
-            command.Visit(this);
+            try
+            {
+                command.Visit(this);
+            }
+            catch (ColumnAlreadyExistsException ex)
+            {
+                response.AppendLine(ex.Message);
+            }
+            catch (ColumnOutOfRangeException ex)
+            {
+                response.AppendLine(ex.Message);
+            }
+            catch (ParserExpectedTokenException ex)
+            {
+                response.AppendLine(ex.Message);
+            }
+            catch (ParserUnexpectedTokenException ex)
+            {
+                response.AppendLine(ex.Message);
+            }
+            catch (TableAlreadyExistsException ex)
+            {
+                response.AppendLine(ex.Message);
+            }
+            catch (TableNotFoundException ex)
+            {
+                response.AppendLine(ex.Message);
+            }
             return response.ToString();
         }
 

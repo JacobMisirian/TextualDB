@@ -16,9 +16,9 @@ namespace TextualDBD.Networking
 
         private TcpListener listener;
 
-        public ConnectionListener(string ip, int port)
+        public ConnectionListener(int port)
         {
-            listener = new TcpListener(IPAddress.Parse(ip), port);
+            listener = new TcpListener(IPAddress.Any, port);
         }
 
         private Thread listenForConnectionsThread;

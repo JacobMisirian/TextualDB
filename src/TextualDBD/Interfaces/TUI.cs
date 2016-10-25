@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 
 using TextualDB;
-using TextualDB.Exceptions;
-
-using TextualDBD.Exceptions;
 using TextualDBD.Interpreter;
 
 namespace TextualDBD.Interfaces
@@ -21,28 +18,9 @@ namespace TextualDBD.Interfaces
 
             while (true)
             {
-                try
-                {
-                    Console.Write(">");
-                    Console.WriteLine(evaluator.Execute(parser.Parse(tokenizer.Scan(Console.ReadLine()))));
-                    evaluator.WriteChanges();
-                }
-                catch (ParserExpectedTokenException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (ParserUnexpectedTokenException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (TableNotFoundException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                catch (ColumnOutOfRangeException ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
+                Console.Write(">");
+                Console.WriteLine(evaluator.Execute(parser.Parse(tokenizer.Scan(Console.ReadLine()))));
+                evaluator.WriteChanges();
             }
         }
     }
