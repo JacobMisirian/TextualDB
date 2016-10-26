@@ -103,6 +103,7 @@ namespace TextualDBD.Interfaces
                 try
                 {
                     e.Client.WriteLine(interpreter.Execute(parser.Parse(tokenizer.Scan(e.Message))));
+                    interpreter.WriteChanges();
                 }
                 catch (ColumnAlreadyExistsException ex)
                 {
