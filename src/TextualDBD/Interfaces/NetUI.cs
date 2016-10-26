@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 
 using TextualDB;
+using TextualDB.Exceptions;
 using TextualDB.Networking;
 
 using TextualDBD.Events;
@@ -98,7 +99,44 @@ namespace TextualDBD.Interfaces
                 listener_ClientDisconnected(sender, new ClientDisconnectedEventArgs() { Client = e.Client });
             }
             else
-                e.Client.WriteLine(interpreter.Execute(parser.Parse(tokenizer.Scan(e.Message))));
+            {
+                try
+                {
+                    e.Client.WriteLine(interpreter.Execute(parser.Parse(tokenizer.Scan(e.Message))));
+                }
+                catch (ColumnAlreadyExistsException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (ColumnOutOfRangeException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (RowOutOfRangeException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (ParserExpectedTokenException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (ParserUnexpectedTokenException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (TableAlreadyExistsException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (TableNotFoundException ex)
+                {
+                    e.Client.WriteLine(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    e.Client.WriteLine(ex.ToString());
+                }
+            }
         }
     }
 }

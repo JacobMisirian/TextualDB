@@ -191,6 +191,8 @@ namespace TextualDBD.Interpreter
         {
             if (matchToken(TokenType.Identifier))
                 return new IdentifierNode(expectToken(TokenType.Identifier).Value);
+            else if (matchToken(TokenType.Number))
+                return new NumberNode(Convert.ToDouble(expectToken(TokenType.Number).Value));
             else if (matchToken(TokenType.String))
                 return new StringNode(expectToken(TokenType.String).Value);
             else if (acceptToken(TokenType.OpenParentheses))
@@ -236,15 +238,43 @@ namespace TextualDBD.Interpreter
 
         private Token expectToken(TokenType tokenType)
         {
-            if (matchToken(tokenType))
-                return Tokens[position++];
-            throw new ParserExpectedTokenException(tokenType, Tokens[position++]);
+            try
+            {
+                if (matchToken(tokenType))
+                    return Tokens[position++];
+                throw new ParserExpectedTokenException(tokenType, Tokens[position++]);
+            }
+            catch
+            {
+                try
+                {
+                    throw new ParserExpectedTokenException(tokenType, Tokens[position - 1]);
+                }
+                catch
+                {
+                    throw new ParserExpectedTokenException(tokenType, Tokens[0]);
+                }
+            }
         }
         private Token expectToken(TokenType tokenType, string value)
         {
-            if (matchToken(tokenType, value))
-                return Tokens[position++];
-            throw new ParserExpectedTokenException(tokenType, value, Tokens[position++]);
+            try
+            {
+                if (matchToken(tokenType, value))
+                    return Tokens[position++];
+                throw new ParserExpectedTokenException(tokenType, value, Tokens[position++]);
+            }
+            catch
+            {
+                try
+                {
+                    throw new ParserExpectedTokenException(tokenType, value, Tokens[position - 1]);
+                }
+                catch
+                {
+                    throw new ParserExpectedTokenException(tokenType, value, Tokens[0]);
+                }
+            }
         }
     }
 }

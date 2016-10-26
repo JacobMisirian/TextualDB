@@ -47,7 +47,7 @@ namespace TextualDBD
                         config.TextualDBDInterfaceType = TextualDBDConfig.InterfaceType.TUI;
                         break;
                     default:
-                        die(string.Format("Unknown floating data or flag {0}!", args[position - 1]));
+                        die(string.Format("Unknown floating data or flag {0}!", args[position]));
                         break;
                 }
             }
@@ -56,6 +56,8 @@ namespace TextualDBD
 
         private string expectData(string type)
         {
+            if (position + 1 >= args.Length)
+                die(string.Format("Expected data type {0}.", type));
             if (args[++position].StartsWith("-"))
                 die(string.Format("Expected data type {0}, instead got flag {1}!", type, args[position]));
             return args[position];

@@ -158,6 +158,10 @@ namespace TextualDBD.Interpreter
                 tableStack.Pop();
             }
         }
+        public void Accept(NumberNode node)
+        {
+            stack.Push(node.Number.ToString());
+        }
         public void Accept(SelectNode node)
         {
             int column = node.Column != "*" ? Database.ResolveColumnNumber(node.Table, node.Column) : -1;

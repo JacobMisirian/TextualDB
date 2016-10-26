@@ -13,6 +13,7 @@ namespace TextualDBD.Interpreter
         void Accept(CreateTableNode node);
         void Accept(IdentifierNode node);
         void Accept(InsertNode node);
+        void Accept(NumberNode node);
         void Accept(SelectNode node);
         void Accept(SelectRowNode node);
         void Accept(ShowColumnsNode node);

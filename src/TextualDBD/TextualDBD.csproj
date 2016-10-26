@@ -69,6 +69,7 @@
     <Compile Include="Interpreter\Ast\SelectRowNode.cs" />
     <Compile Include="TextualDBDArgumentParser.cs" />
     <Compile Include="TextualDBDConfig.cs" />
+    <Compile Include="Interpreter\Ast\NumberNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
