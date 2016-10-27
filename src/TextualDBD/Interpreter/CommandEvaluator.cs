@@ -50,14 +50,6 @@ namespace TextualDBD.Interpreter
             {
                 response.AppendLine(ex.Message);
             }
-            catch (ParserExpectedTokenException ex)
-            {
-                response.AppendLine(ex.Message);
-            }
-            catch (ParserUnexpectedTokenException ex)
-            {
-                response.AppendLine(ex.Message);
-            }
             catch (TableAlreadyExistsException ex)
             {
                 response.AppendLine(ex.Message);
@@ -161,6 +153,18 @@ namespace TextualDBD.Interpreter
         public void Accept(NumberNode node)
         {
             stack.Push(node.Number.ToString());
+        }
+        public void Accept(RenameColumnNode node)
+        {
+            var table = Database.Select(node.Table);
+            table.Columns[table.ResolveColumnNumber(node.Column)] = node.Name;
+        }
+        public void Accept(RenameTableNode node)
+        {
+            var table = Database.Select(node.Table);
+            table.Name = node.Name;
+            Database.Tables.Remove(node.Table);
+            Database.Tables.Add(node.Name, table);
         }
         public void Accept(SelectNode node)
         {

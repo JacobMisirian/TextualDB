@@ -27,6 +27,8 @@ namespace TextualDBD.Interpreter
                 return parseDrop();
             else if (matchToken(TokenType.Identifier, "insert"))
                 return parseInsert();
+            else if (matchToken(TokenType.Identifier, "rename"))
+                return parseRename();
             else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
             else if (matchToken(TokenType.Identifier, "show"))
@@ -94,6 +96,28 @@ namespace TextualDBD.Interpreter
             if (acceptToken(TokenType.Identifier, "where"))
                 where = parseExpression();
             return new InsertNode(table, values, where);
+        }
+        private AstNode parseRename()
+        {
+            expectToken(TokenType.Identifier, "rename");
+            if (acceptToken(TokenType.Identifier, "column"))
+            {
+                string column = expectToken(TokenType.Identifier).Value;
+                acceptToken(TokenType.Identifier, "to");
+                string name = expectToken(TokenType.Identifier).Value;
+                expectToken(TokenType.Identifier, "in");
+                string table = expectToken(TokenType.Identifier).Value;
+                return new RenameColumnNode(column, name, table);
+            }
+            else if (acceptToken(TokenType.Identifier, "table"))
+            {
+                string table = expectToken(TokenType.Identifier).Value;
+                acceptToken(TokenType.Identifier, "to");
+                string name = expectToken(TokenType.Identifier).Value;
+                return new RenameTableNode(name, table);
+            }
+            expectToken(TokenType.Identifier, "column or table");
+            return null;
         }
         private AstNode parseSelect()
         {

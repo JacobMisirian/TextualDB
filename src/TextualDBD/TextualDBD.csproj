@@ -70,6 +70,8 @@
     <Compile Include="TextualDBDArgumentParser.cs" />
     <Compile Include="TextualDBDConfig.cs" />
     <Compile Include="Interpreter\Ast\NumberNode.cs" />
+    <Compile Include="Interpreter\Ast\RenameColumnNode.cs" />
+    <Compile Include="Interpreter\Ast\RenameTableNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

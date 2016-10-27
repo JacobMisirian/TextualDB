@@ -27,7 +27,7 @@ namespace TextualDBD
         }
 
         public enum InterfaceType
-        {
+        { 
             Server,
             TUI
         }
