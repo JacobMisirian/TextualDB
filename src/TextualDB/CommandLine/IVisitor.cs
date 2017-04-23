@@ -6,6 +6,7 @@ namespace TextualDB.CommandLine
     {
         void Accept(FilterNode node);
         void Accept(IdentifierNode node);
+        void Accept(InsertNode node);
         void Accept(ListNode node);
         void Accept(SelectNode node);
         void Accept(WhereNode node);

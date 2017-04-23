@@ -29,6 +29,8 @@ namespace TextualDB.Serializer
 
         private void serializeTable(TextualTable table)
         {
+            colLength = table.ColumnLength;
+
             writer.WriteLine(string.Format("{0}:", table.Name));
 
             foreach (var column in table.Columns)
@@ -37,21 +39,30 @@ namespace TextualDB.Serializer
 
             foreach (var row in table.Rows)
                 serializeRow(row);
+            writer.WriteLine("?");
         }
 
+        private int colLength;
         private void serializeRow(TextualRow row)
         {
-            int colLength = row.Owner.ColumnLength + (row.Owner.Columns.Count * 2);
+            int hyphenLength = 0;
 
-            for (int i = 0; i < colLength; i++)
+            foreach (var val in row.Values.Values)
+                hyphenLength += val.Value.Length + 4;
+
+            hyphenLength += 2;
+
+            hyphenLength = hyphenLength < colLength ? colLength : hyphenLength;
+
+            for (int i = 0; i < hyphenLength; i++)
                 writer.Write("-");
 
             writer.WriteLine();
             foreach (var col in row.Owner.Columns)
-                writer.Write(string.Format("\"{0}\" | ", row.Values[col].Value));
+                writer.Write(string.Format("\"{0}\" | ", row.Values.ContainsKey(col) ? row.Values[col].Value : string.Empty));
             writer.WriteLine();
 
-            for (int i = 0; i < colLength; i++)
+            for (int i = 0; i < hyphenLength; i++)
                 writer.Write("-");
             writer.WriteLine();
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using TextualDB.CommandLine.Ast;
 using TextualDB.Deserializer.Lexer;
@@ -29,6 +30,8 @@ namespace TextualDB.CommandLine
         {
             if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
+            else if (matchToken(TokenType.Identifier, "insert"))
+                return parseInsert();
             else if (matchToken(TokenType.Identifier))
                 return new IdentifierNode(currentToken.SourceLocation, expectToken(TokenType.Identifier).Value);
             else
@@ -43,7 +46,7 @@ namespace TextualDB.CommandLine
 
             ListNode columns;
             if (acceptToken(TokenType.Asterisk))
-                columns = new ListNode(location, new AstNode[] { new IdentifierNode(currentToken.SourceLocation, "*") });
+                columns = new ListNode(location, new AstNode[0]);
             else
                 columns = parseList();
 
@@ -55,7 +58,7 @@ namespace TextualDB.CommandLine
             if (matchToken(TokenType.Identifier, "where"))
                 where = parseWhere();
             else
-                where = new WhereNode(currentToken.SourceLocation, new FilterNode[0]);
+                where = new WhereNode(location, new FilterNode[0]);
 
             return new SelectNode(location, columns, table, where);
         }
@@ -105,13 +108,53 @@ namespace TextualDB.CommandLine
                     throw new CommandLineParseException(location, "Unknown operation {0}!", tokens[position - 1].Value);
             }
 
-            string value = expectToken(TokenType.String).Value;
+            string value;
+            if (matchToken(TokenType.String))
+                value = expectToken(TokenType.String).Value;
+            else if (matchToken(TokenType.Number))
+                value = expectToken(TokenType.Number).Value;
+            else
+                throw new CommandLineParseException(location, "Unexpected token of type {0} with value {1}!", currentToken.Value, currentToken.TokenType);
 
             return new FilterNode(location, column, value, filterType);
         }
 
+        private InsertNode parseInsert()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "insert");
+            expectToken(TokenType.Identifier, "into");
+
+            string table = expectToken(TokenType.Identifier).Value;
+
+            int pos = -1;
+
+            if (acceptToken(TokenType.Identifier, "at"))
+                pos = Convert.ToInt32(expectToken(TokenType.Number).Value);
+
+            Dictionary<string, string> values = new Dictionary<string, string>();
+
+            if (acceptToken(TokenType.Identifier, "values"))
+            {
+                do
+                {
+                    string key = expectToken(TokenType.Identifier).Value;
+                    acceptToken(TokenType.Colon);
+                    string val = expectToken(TokenType.String).Value;
+
+                    values.Add(key, val);
+                }
+                while (acceptToken(TokenType.Comma));
+            }
+
+            return new InsertNode(location, table, values, pos);
+        }
+
         private WhereNode parseWhere()
         {
+            expectToken(TokenType.Identifier, "where");
+
             var location = currentToken.SourceLocation;
 
             List<FilterNode> filters = new List<FilterNode>();
@@ -126,11 +169,15 @@ namespace TextualDB.CommandLine
 
         private bool matchToken(TokenType tokenType)
         {
-            return currentToken.TokenType == tokenType && !eof;
+            if (eof)
+                return false;
+            return currentToken.TokenType == tokenType;
         }
         private bool matchToken(TokenType tokenType, string val)
         {
-            return currentToken.TokenType == tokenType && currentToken.Value == val && !eof;
+            if (eof)
+                return false;
+            return currentToken.TokenType == tokenType && currentToken.Value == val;
         }
 
         private bool acceptToken(TokenType tokenType)
@@ -155,7 +202,7 @@ namespace TextualDB.CommandLine
         private Token expectToken(TokenType tokenType)
         {
             if (!matchToken(tokenType))
-                throw new CommandLineParseException(currentToken.SourceLocation, "Expected token of type {0}, got {1}!", tokenType, currentToken.TokenType);
+                throw new CommandLineParseException(currentToken.SourceLocation, "Expected token of type {0}, got {1} with value {2}!", tokenType, currentToken.TokenType, currentToken.Value);
             try
             {
                 return currentToken;

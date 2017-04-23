@@ -13,7 +13,7 @@ namespace TextualDB.Components
         public string Name { get; private set; }
 
         public List<string> Columns { get; private set; }
-        public int ColumnLength { get { int total = 0; foreach (var col in Columns) total += col.Length; return total; } }
+        public int ColumnLength { get { int total = 0; foreach (var col in Columns) total += col.Length + 2; return total + 2; } }
         public List<TextualRow> Rows { get; private set; }
 
         public TextualTable(string name, params string[] columns)
@@ -45,12 +45,14 @@ namespace TextualDB.Components
             return this;
         }
 
-        public void AddRow(TextualRow row)
+        public void AddRow(TextualRow row, int pos = -1)
         {
-            Rows.Add(row);
+            pos = pos == -1 ? Rows.Count : pos;
+            Rows.Insert(pos, row);
         }
-        public void AddRow(params string[] values)
+        public void AddRow(int pos = -1, params string[] values)
         {
+
             var row = new TextualRow(this);
 
             row.StartAutoValueAdding();
@@ -58,7 +60,7 @@ namespace TextualDB.Components
             foreach (var val in values)
                 row.AddValue(val);
 
-            AddRow(row);
+            AddRow(row, pos);
         }
 
         public TextualTable ChangeColumnName(string oldName, string newName)
@@ -109,7 +111,11 @@ namespace TextualDB.Components
             {
                 var row_ = new TextualRow(ret);
                 foreach (string column in columns)
-                    row_.AddValue(column, row_.Values[column].Value);
+                {
+                    if (!row.Values.ContainsKey(column))
+                        throw new ColumnNotFoundException(column, this);
+                    row_.AddValue(column, row.Values[column].Value);
+                }
                 ret.AddRow(row_);
             }
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
 
+using TextualDB.CommandLine;
 using TextualDB.Deserializer;
 using TextualDB.Deserializer.Lexer;
 using TextualDB.Exceptions;
-using TextualDB.Serializer;
 
 namespace TextualDB
 {
@@ -12,17 +12,44 @@ namespace TextualDB
     {
         static void Main(string[] args)
         {
-            try
-            {
-                var tokens = new Scanner().Scan(args[0], File.ReadAllText(args[0]));
-                var database = new TextualParser(tokens).ParseDatabase(args[0]);
+            var database = new TextualParser(new Scanner().Scan(args[0], File.ReadAllText(args[0]))).ParseDatabase(args[0]);
 
-                foreach (var table in database.Tables.Values)
-                    Console.WriteLine(table.ToString());
-            }
-            catch (DeserializerException ex)
+            while (true)
             {
-                Console.WriteLine(ex.Message);
+                try
+                {
+                    Console.Write("> ");
+                    string command = Console.ReadLine();
+
+                    var tokens = new Scanner().Scan("stdin", command);
+                    var ast = new Parser(tokens).Parse();
+
+                    new AstVisitor(ast, database);
+                }
+                catch (ColumnExistsException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (ColumnNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (CommandLineParseException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (CommandLineVisitorException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (DeserializerException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+                catch (TableNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
     }

@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+
+using TextualDB.Exceptions;
 
 namespace TextualDB.Components
 {
@@ -49,6 +48,14 @@ namespace TextualDB.Components
             Values.Add(newName, temp);
 
             return this;
+        }
+
+        public TextualData GetValue(string column)
+        {
+            if (!Owner.ContainsColumn(column))
+                throw new ColumnNotFoundException(column, Owner);
+
+            return Values[column];
         }
 
         public TextualRow RemoveValue(string column)
