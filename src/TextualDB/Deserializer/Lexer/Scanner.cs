@@ -31,10 +31,35 @@ namespace TextualDB.Deserializer.Lexer
                     scanIdentifier();
                 else
                 {
+                    char c;
                     switch ((char)peekChar())
                     {
+                        case '*':
+                            add(TokenType.Asterisk, ((char)readChar()).ToString());
+                            break;
                         case ':':
                             add(TokenType.Colon, ((char)readChar()).ToString());
+                            break;
+                        case ',':
+                            add(TokenType.Comma, ((char)readChar()).ToString());
+                            break;
+                        case '=':
+                            add(TokenType.Comparison, ((char)readChar()).ToString());
+                            break;
+                        case '>':
+                        case '<':
+                            c = (char)readChar();
+                            if ((char)peekChar() == '=')
+                                add(TokenType.Comparison, c + "" + (char)readChar());
+                            else
+                                add(TokenType.Comparison, c.ToString());
+                            break;
+                        case '!':
+                            readChar();
+                            if ((char)peekChar() == '=')
+                                add(TokenType.Comparison, "!" + (char)readChar());
+                            else
+                                add(TokenType.Exclamation, "!");
                             break;
                         case '-':
                             add(TokenType.Hyphen, ((char)readChar()).ToString());

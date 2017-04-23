@@ -17,7 +17,8 @@ namespace TextualDB
                 var tokens = new Scanner().Scan(args[0], File.ReadAllText(args[0]));
                 var database = new TextualParser(tokens).ParseDatabase(args[0]);
 
-                new TextualSerializer().SerializeDatabase(args[1], database);
+                foreach (var table in database.Tables.Values)
+                    Console.WriteLine(table.ToString());
             }
             catch (DeserializerException ex)
             {

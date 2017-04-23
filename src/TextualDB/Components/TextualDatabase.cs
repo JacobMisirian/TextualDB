@@ -25,21 +25,25 @@ namespace TextualDB.Components
             Tables = tables;
         }
 
-        public void AddTable(TextualTable table)
+        public TextualDatabase AddTable(TextualTable table)
         {
             Tables.Add(table.Name, table);
+            return this;
         }
-        public void AddTable(string name)
+        public TextualDatabase AddTable(string name)
         {
             Tables.Add(name, new TextualTable(name));
+            return this;
         }
-        public void AddTable(string name, params string[] rows)
+        public TextualDatabase AddTable(string name, params string[] rows)
         {
             Tables.Add(name, new TextualTable(name, rows));
+            return this;
         }
-        public void AddTable(string name, List<string> columns, List<TextualRow> rows)
+        public TextualDatabase AddTable(string name, List<string> columns, List<TextualRow> rows)
         {
             Tables.Add(name, new TextualTable(name, columns, rows));
+            return this;
         }
 
         public bool ContainsTable(string name)

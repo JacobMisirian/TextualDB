@@ -15,6 +15,11 @@ namespace TextualDB.Serializer
         public void SerializeDatabase(string path, TextualDatabase database)
         {
             var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+            SerializeDatabase(stream, database);
+        }
+
+        public void SerializeDatabase(Stream stream, TextualDatabase database)
+        {
             writer = new StreamWriter(stream);
             writer.AutoFlush = true;
 

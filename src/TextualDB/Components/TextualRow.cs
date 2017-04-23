@@ -31,13 +31,30 @@ namespace TextualDB.Components
             columnPos = -1;
         }
 
-        public void AddValue(string value)
+        public TextualRow AddValue(string value)
         {
             Values[Owner.Columns[columnPos++]] = new TextualData(TextualDataType.String, value);
+            return this;
         }
-        public void AddValue(string column, string value)
+        public TextualRow AddValue(string column, string value)
         {
             Values[column] = new TextualData(TextualDataType.String, value);
+            return this;
+        }
+
+        public TextualRow ChangeColumnName(string oldName, string newName)
+        {
+            var temp = Values[oldName];
+            Values.Remove(oldName);
+            Values.Add(newName, temp);
+
+            return this;
+        }
+
+        public TextualRow RemoveValue(string column)
+        {
+            Values.Remove(column);
+            return this;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -42,6 +42,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLine\AstNode.cs" />
+    <Compile Include="CommandLine\AstVisitor.cs" />
+    <Compile Include="CommandLine\Ast\FilterNode.cs" />
+    <Compile Include="CommandLine\Ast\IdentifierNode.cs" />
+    <Compile Include="CommandLine\Ast\ListNode.cs" />
+    <Compile Include="CommandLine\Ast\SelectNode.cs" />
+    <Compile Include="CommandLine\Ast\WhereNode.cs" />
+    <Compile Include="CommandLine\IVisitor.cs" />
+    <Compile Include="CommandLine\Parser.cs" />
     <Compile Include="Components\TextualData.cs" />
     <Compile Include="Components\TextualDatabase.cs" />
     <Compile Include="Components\TextualDataType.cs" />
@@ -50,6 +59,9 @@
     <Compile Include="Deserializer\Lexer\Token.cs" />
     <Compile Include="Deserializer\SourceLocation.cs" />
     <Compile Include="Deserializer\TextualParser.cs" />
+    <Compile Include="Exceptions\ColumnExistsException.cs" />
+    <Compile Include="Exceptions\ColumnNotFoundException.cs" />
+    <Compile Include="Exceptions\CommandLineParseException.cs" />
     <Compile Include="Exceptions\DeserializerException.cs" />
     <Compile Include="Exceptions\TableNotFoundException.cs" />
     <Compile Include="Program.cs" />
@@ -63,5 +75,6 @@
   <ItemGroup>
     <Compile Include="Components\TextualTable.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
