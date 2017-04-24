@@ -120,7 +120,7 @@ namespace TextualDB.CommandLine
                 do
                 {
                     string key = expectToken(TokenType.Identifier).Value;
-                    acceptToken(TokenType.Colon);
+                    expectToken(TokenType.Comparison, "=");
                     string val = expectToken(TokenType.String).Value;
 
                     values.Add(key, val);
