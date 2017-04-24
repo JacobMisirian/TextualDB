@@ -22,6 +22,22 @@ namespace TextualDB.CommandLine
 
             return result;
         }
+
+        public void Accept(CreateTableNode node)
+        {
+            List<string> columns = new List<string>();
+
+            foreach (var element in node.Columns.Elements)
+            {
+                if (!(element is IdentifierNode))
+                    throw new CommandLineVisitorException(node.SourceLocation, "Column was not an identifier!");
+                columns.Add(((IdentifierNode)element).Identifier);
+            }
+
+            database.AddTable(node.Table, columns.ToArray());
+
+            Save();
+        }
        
         public void Accept(FilterNode node)
         {

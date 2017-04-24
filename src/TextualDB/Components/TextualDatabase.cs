@@ -27,23 +27,22 @@ namespace TextualDB.Components
 
         public TextualDatabase AddTable(TextualTable table)
         {
+            if (ContainsTable(table.Name))
+                throw new TableExistsException(table.Name, this);
             Tables.Add(table.Name, table);
             return this;
         }
         public TextualDatabase AddTable(string name)
         {
-            Tables.Add(name, new TextualTable(name));
-            return this;
+            return AddTable(new TextualTable(name));
         }
-        public TextualDatabase AddTable(string name, params string[] rows)
+        public TextualDatabase AddTable(string name, params string[] columns)
         {
-            Tables.Add(name, new TextualTable(name, rows));
-            return this;
+            return AddTable(new TextualTable(name, columns));
         }
-        public TextualDatabase AddTable(string name, List<string> columns, List<TextualRow> rows)
+        public TextualDatabase AddTable(string name, IEnumerable<string> columns, IEnumerable<TextualRow> rows)
         {
-            Tables.Add(name, new TextualTable(name, columns, rows));
-            return this;
+            return AddTable(new TextualTable(name, columns.ToList(), rows.ToList()));
         }
 
         public bool ContainsTable(string name)

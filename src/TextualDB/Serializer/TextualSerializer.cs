@@ -39,10 +39,16 @@ namespace TextualDB.Serializer
 
             foreach (var row in table.Rows)
                 serializeRow(writer, row);
+          
+            for (int i = 0; i < lastHyphenLength; i++)
+                writer.Write("-");
+            writer.WriteLine();
+
             writer.WriteLine("?");
         }
 
         private int colLength;
+        private int lastHyphenLength;
         private void serializeRow(StreamWriter writer, TextualRow row)
         {
             int hyphenLength = 0;
@@ -50,20 +56,19 @@ namespace TextualDB.Serializer
             foreach (var val in row.Values.Values)
                 hyphenLength += val.Value.Length + 4;
 
-            hyphenLength += 2;
+            hyphenLength += 4;
 
-            hyphenLength = hyphenLength < colLength ? colLength : hyphenLength;
+            var temp = hyphenLength;
+            hyphenLength = hyphenLength < lastHyphenLength ? lastHyphenLength : hyphenLength;
+            lastHyphenLength = temp;
 
             for (int i = 0; i < hyphenLength; i++)
                 writer.Write("-");
-
             writer.WriteLine();
+
+            writer.Write("| ");
             foreach (var col in row.Owner.Columns)
                 writer.Write(string.Format("\"{0}\" | ", row.Values.ContainsKey(col) ? row.Values[col].Value : string.Empty));
-            writer.WriteLine();
-
-            for (int i = 0; i < hyphenLength; i++)
-                writer.Write("-");
             writer.WriteLine();
         }
     }

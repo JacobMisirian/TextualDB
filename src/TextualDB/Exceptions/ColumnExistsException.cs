@@ -9,7 +9,7 @@ namespace TextualDB.Exceptions
 {
     public class ColumnExistsException : Exception
     {
-        public new string Message { get { return string.Format("Column {0} does not exist in table {1}!", Column, Table.Name); } }
+        public new string Message { get { return string.Format("Column {0} already exists in table {1}!", Column, Table.Name); } }
 
         public string Column { get; private set; }
         public TextualTable Table { get; private set; }

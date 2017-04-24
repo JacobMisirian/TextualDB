@@ -37,13 +37,16 @@ namespace TextualDB.Deserializer
         {
             string name = expectToken(TokenType.Identifier).Value;
             acceptToken(TokenType.Colon);
+            acceptToken(TokenType.Pipe);
+
             List<string> columns = new List<string>();
             while (matchToken(TokenType.Identifier))
             {
                 columns.Add(expectToken(TokenType.Identifier).Value);
                 acceptToken(TokenType.Pipe);
             }
-            
+            while (acceptToken(TokenType.Hyphen)) ;
+
             List<TextualRow> rows = new List<TextualRow>();
             TextualTable table = new TextualTable(name, columns, rows);
 
@@ -54,7 +57,10 @@ namespace TextualDB.Deserializer
 
         private TextualRow parseRow(TextualTable table)
         {
+            acceptToken(TokenType.Pipe);
             while (acceptToken(TokenType.Hyphen)) ;
+            acceptToken(TokenType.Pipe);
+
             TextualRow row = new TextualRow(table);
             row.StartAutoValueAdding();
             for (int i = 0; i < table.Columns.Count; i++)

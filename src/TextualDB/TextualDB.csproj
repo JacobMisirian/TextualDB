@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine\AstNode.cs" />
+    <Compile Include="CommandLine\Ast\CreateTableNode.cs" />
     <Compile Include="CommandLine\Ast\FilterNode.cs" />
     <Compile Include="CommandLine\Ast\IdentifierNode.cs" />
     <Compile Include="CommandLine\Ast\InsertNode.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Exceptions\CommandLineParseException.cs" />
     <Compile Include="Exceptions\CommandLineVisitorException.cs" />
     <Compile Include="Exceptions\DeserializerException.cs" />
+    <Compile Include="Exceptions\TableExistsException.cs" />
     <Compile Include="Exceptions\TableNotFoundException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

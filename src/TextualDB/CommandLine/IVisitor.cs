@@ -4,6 +4,7 @@ namespace TextualDB.CommandLine
 {
     public interface IVisitor
     {
+        void Accept(CreateTableNode node);
         void Accept(FilterNode node);
         void Accept(IdentifierNode node);
         void Accept(InsertNode node);
