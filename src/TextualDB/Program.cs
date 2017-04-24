@@ -12,19 +12,23 @@ namespace TextualDB
     {
         static void Main(string[] args)
         {
-            var database = new TextualParser(new Scanner().Scan(args[0], File.ReadAllText(args[0]))).ParseDatabase(args[0]);
-
+            var interpreter = new TextualInterpreter();
             while (true)
             {
+                var database = new TextualParser(new Scanner().Scan(args[0], File.ReadAllText(args[0]))).ParseDatabase(args[0]);
                 try
                 {
                     Console.Write("> ");
                     string command = Console.ReadLine();
+                    if (command.Trim() == string.Empty)
+                        continue;
 
                     var tokens = new Scanner().Scan("stdin", command);
                     var ast = new Parser(tokens).Parse();
 
-                    new AstVisitor(ast, database);
+                    var result = interpreter.Execute(ast, database);
+                    Console.WriteLine(result.TableResult);
+                    Console.WriteLine(result.TextResult.ToString());
                 }
                 catch (ColumnExistsException ex)
                 {

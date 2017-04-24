@@ -28,7 +28,10 @@ namespace TextualDB.CommandLine
 
         private AstNode parseStatement()
         {
-            if (matchToken(TokenType.Identifier, "select"))
+            var location = currentToken.SourceLocation;
+            if (acceptToken(TokenType.Identifier, "show"))
+                return new ShowNode(location);
+            else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
             else if (matchToken(TokenType.Identifier, "insert"))
                 return parseInsert();

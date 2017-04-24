@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,7 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine\AstNode.cs" />
-    <Compile Include="CommandLine\AstVisitor.cs" />
     <Compile Include="CommandLine\Ast\FilterNode.cs" />
     <Compile Include="CommandLine\Ast\IdentifierNode.cs" />
     <Compile Include="CommandLine\Ast\InsertNode.cs" />
@@ -69,6 +70,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer\TextualSerializer.cs" />
+    <Compile Include="CommandLine\Ast\ShowNode.cs" />
+    <Compile Include="CommandLine\TextualInterpreter.cs" />
+    <Compile Include="CommandLine\TextualInterpreterResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

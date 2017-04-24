@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using TextualDB.Deserializer;
+﻿using TextualDB.Deserializer;
 
 namespace TextualDB.CommandLine.Ast
 {
     public class SelectNode : AstNode
     {
-        public override SourceLocation SourceLocation { get; }
+        public override SourceLocation SourceLocation { get; set; }
 
         public ListNode Columns { get; private set; }
         public string Table { get; private set; }

@@ -8,7 +8,7 @@ namespace TextualDB.CommandLine.Ast
 {
     public class WhereNode : AstNode
     {
-        public override SourceLocation SourceLocation { get; }
+        public override SourceLocation SourceLocation { get; set; }
 
         public List<FilterNode> Filters { get; private set; }
 

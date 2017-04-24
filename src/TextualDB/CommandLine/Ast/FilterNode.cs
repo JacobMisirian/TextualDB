@@ -4,7 +4,7 @@ namespace TextualDB.CommandLine.Ast
 {
     public class FilterNode : AstNode
     {
-        public override SourceLocation SourceLocation { get; }
+        public override SourceLocation SourceLocation { get; set; }
 
         public string Column { get; private set; }
         public string Target { get; private set; }

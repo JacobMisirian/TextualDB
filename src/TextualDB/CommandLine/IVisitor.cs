@@ -9,6 +9,7 @@ namespace TextualDB.CommandLine
         void Accept(InsertNode node);
         void Accept(ListNode node);
         void Accept(SelectNode node);
+        void Accept(ShowNode node);
         void Accept(WhereNode node);
     }
 }

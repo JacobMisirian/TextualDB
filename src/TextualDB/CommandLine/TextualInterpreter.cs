@@ -8,26 +8,26 @@ using TextualDB.Serializer;
 
 namespace TextualDB.CommandLine
 {
-    public class AstVisitor : IVisitor
+    public class TextualInterpreter : IVisitor
     {
         private TextualDatabase database;
+        private TextualInterpreterResult result;
 
-        private TextualTable tableResult;
-
-        public AstVisitor(AstNode ast, TextualDatabase database)
+        public TextualInterpreterResult Execute(AstNode ast, TextualDatabase database)
         {
             this.database = database;
+            result = new TextualInterpreterResult();
 
             ast.Visit(this);
 
-            Console.WriteLine(tableResult.ToString());
+            return result;
         }
-
+       
         public void Accept(FilterNode node)
         {
-            TextualTable table = new TextualTable(tableResult.Name, tableResult.Columns.ToArray());
+            TextualTable table = new TextualTable(result.TableResult.Name, result.TableResult.Columns.ToArray());
 
-            foreach (var row in tableResult.Rows)
+            foreach (var row in result.TableResult.Rows)
             {
                 switch (node.FilterType)
                 {
@@ -74,7 +74,7 @@ namespace TextualDB.CommandLine
                 }
             }
 
-            tableResult = table;
+            result.TableResult = table;
         }
 
         public void Accept(IdentifierNode node)
@@ -84,19 +84,21 @@ namespace TextualDB.CommandLine
 
         public void Accept(InsertNode node)
         {
-            tableResult = database.GetTable(node.Table);
-            TextualRow row = new TextualRow(tableResult);
+            var table = database.GetTable(node.Table);
+            TextualRow row = new TextualRow(table);
 
             foreach (var pair in node.Values)
             {
-                if (!tableResult.ContainsColumn(pair.Key))
-                    throw new ColumnNotFoundException(pair.Key, tableResult);
+                if (!table.ContainsColumn(pair.Key))
+                    throw new ColumnNotFoundException(pair.Key, table);
                 row.AddValue(pair.Key, pair.Value);
             }
 
-            tableResult.AddRow(row, node.Position);
+            table.AddRow(row, node.Position);
 
             Save();
+
+            result.TableResult = null;
         }
         
         public void Accept(ListNode node)
@@ -106,7 +108,7 @@ namespace TextualDB.CommandLine
 
         public void Accept(SelectNode node)
         {
-            tableResult = database.GetTable(node.Table);
+            result.TableResult = database.GetTable(node.Table);
 
             Accept(node.Where);
 
@@ -119,12 +121,19 @@ namespace TextualDB.CommandLine
                 columns.Add(((IdentifierNode)column).Identifier);
             }
 
-            tableResult = tableResult.Select(columns.ToArray());
+            result.TableResult = result.TableResult.Select(columns.ToArray());
+        }
+
+        public void Accept(ShowNode node)
+        {
+            result.TextResult.AppendFormat("Tables ({0}):\n", database.FilePath);
+            foreach (var table in database.Tables.Keys)
+                result.TextResult.AppendLine(table);
         }
 
         public void Accept(WhereNode node)
         {
-            if (tableResult == null)
+            if (result.TableResult == null)
                 throw new CommandLineVisitorException(node.SourceLocation, "Unexpected where expression!");
             foreach (var filter in node.Filters)
                 filter.Visit(this);

@@ -10,8 +10,6 @@ namespace TextualDB.Serializer
 {
     public class TextualSerializer
     {
-        private StreamWriter writer;
-
         public void SerializeDatabase(string path, TextualDatabase database)
         {
             var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
@@ -20,14 +18,16 @@ namespace TextualDB.Serializer
 
         public void SerializeDatabase(Stream stream, TextualDatabase database)
         {
-            writer = new StreamWriter(stream);
-            writer.AutoFlush = true;
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.AutoFlush = true;
 
-            foreach (var table in database.Tables.Values)
-                serializeTable(table);
+                foreach (var table in database.Tables.Values)
+                    serializeTable(writer, table);
+            }
         }
 
-        private void serializeTable(TextualTable table)
+        private void serializeTable(StreamWriter writer, TextualTable table)
         {
             colLength = table.ColumnLength;
 
@@ -38,12 +38,12 @@ namespace TextualDB.Serializer
             writer.WriteLine();
 
             foreach (var row in table.Rows)
-                serializeRow(row);
+                serializeRow(writer, row);
             writer.WriteLine("?");
         }
 
         private int colLength;
-        private void serializeRow(TextualRow row)
+        private void serializeRow(StreamWriter writer, TextualRow row)
         {
             int hyphenLength = 0;
 

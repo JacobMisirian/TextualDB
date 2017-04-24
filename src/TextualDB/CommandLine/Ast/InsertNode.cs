@@ -6,7 +6,7 @@ namespace TextualDB.CommandLine.Ast
 {
     public class InsertNode : AstNode
     {
-        public override SourceLocation SourceLocation { get; }
+        public override SourceLocation SourceLocation { get; set; }
 
         public string Table { get; private set; }
         public int Position { get; private set; }
