@@ -12,6 +12,7 @@ namespace TextualDB.Serializer
     {
         public void SerializeDatabase(string path, TextualDatabase database)
         {
+            File.Delete(path);
             var stream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
             SerializeDatabase(stream, database);
         }
@@ -30,6 +31,7 @@ namespace TextualDB.Serializer
         private void serializeTable(StreamWriter writer, TextualTable table)
         {
             colLength = table.ColumnLength;
+            lastHyphenLength = colLength;
 
             writer.WriteLine(string.Format("{0}:", table.Name));
 

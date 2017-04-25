@@ -23,6 +23,15 @@ namespace TextualDB.CommandLine
             return result;
         }
 
+        public void Accept(CreateColumnNode node)
+        {
+            var table = database.GetTable(node.Table);
+
+            table.AddColumn(node.Column, node.Position);
+
+            Save();
+        }
+
         public void Accept(CreateTableNode node)
         {
             List<string> columns = new List<string>();
@@ -35,6 +44,53 @@ namespace TextualDB.CommandLine
             }
 
             database.AddTable(node.Table, columns.ToArray());
+
+            Save();
+        }
+
+        public void Accept(DeleteColumnNode node)
+        {
+            var table = database.GetTable(node.Table);
+            table.RemoveColumn(node.Column);
+
+            Save();
+        }
+
+        public void Accept(DeleteRowNode node)
+        {
+            var table = database.GetTable(node.Table);
+            if (node.Positions != null)
+            {
+                List<TextualRow> rows = new List<TextualRow>();
+                foreach (var pos in node.Positions.Elements)
+                {
+                    if (!(pos is NumberNode))
+                        throw new CommandLineVisitorException(node.SourceLocation, "Position was not a number!");
+                    int position = ((NumberNode)pos).Number;
+
+                    rows.Add(table.GetRow(position));
+                }
+
+                foreach (var row in rows)
+                    table.RemoveRow(row);
+            }
+            else
+            {
+                result.TableResult = table;
+                Accept(node.Where);
+
+                foreach (var row in result.TableResult.Rows)
+                    table.RemoveRow(row);
+            }
+
+            Save();
+
+            result.TableResult = null;
+        }
+
+        public void Accept(DeleteTableNode node)
+        {
+            database.RemoveTable(node.Table);
 
             Save();
         }
@@ -120,6 +176,31 @@ namespace TextualDB.CommandLine
         public void Accept(ListNode node)
         {
 
+        }
+
+        public void Accept(NumberNode node)
+        {
+
+        }
+
+        public void Accept(RenameColumnNode node)
+        {
+            var table = database.GetTable(node.Table);
+
+            table.ChangeColumnName(node.OldName, node.NewName);
+
+            Save();
+        }
+
+        public void Accept(RenameTableNode node)
+        {
+            var table = database.GetTable(node.OldName);
+            table.Name = node.NewName;
+            
+            database.Tables.Remove(node.OldName);
+            database.Tables.Add(node.NewName, table);
+
+            Save();
         }
 
         public void Accept(SelectNode node)

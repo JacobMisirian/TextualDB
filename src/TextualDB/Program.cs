@@ -50,6 +50,10 @@ namespace TextualDB
                 {
                     Console.WriteLine(ex.Message);
                 }
+                catch (RowNotFoundException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
                 catch (TableNotFoundException ex)
                 {
                     Console.WriteLine(ex.Message);

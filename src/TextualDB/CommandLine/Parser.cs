@@ -30,30 +30,118 @@ namespace TextualDB.CommandLine
         {
             var location = currentToken.SourceLocation;
             if (matchToken(TokenType.Identifier, "create"))
-                return parseCreateTable();
+                return parseCreate();
+            else if (matchToken(TokenType.Identifier, "delete"))
+                return parseDelete();
             else if (matchToken(TokenType.Identifier, "insert"))
                 return parseInsert();
+            else if (matchToken(TokenType.Identifier, "rename"))
+                return parseRename();
             else if (acceptToken(TokenType.Identifier, "show"))
                 return new ShowNode(location);
             else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
             else if (matchToken(TokenType.Identifier))
                 return new IdentifierNode(currentToken.SourceLocation, expectToken(TokenType.Identifier).Value);
+            else if (matchToken(TokenType.Number))
+                return new NumberNode(currentToken.SourceLocation, Convert.ToInt32(expectToken(TokenType.Number).Value));
             else
                 throw new CommandLineParseException(currentToken.SourceLocation, "Unexpected token of type {0} with value {1}!", currentToken.Value, currentToken.TokenType);
         }
 
-        private CreateTableNode parseCreateTable()
+        private AstNode parseCreate()
         {
             var location = currentToken.SourceLocation;
 
             expectToken(TokenType.Identifier, "create");
+            if (matchToken(TokenType.Identifier, "column"))
+                return parseCreateColumn();
+            else if (matchToken(TokenType.Identifier, "table"))
+                return parseCreateTable();
+            else
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'column' or 'table'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+        }
+        private CreateColumnNode parseCreateColumn()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "column");
+            string column = expectToken(TokenType.Identifier).Value;
+            int position = -1;
+            if (acceptToken(TokenType.Identifier, "at"))
+                position = Convert.ToInt32(expectToken(TokenType.Number).Value);
+            expectToken(TokenType.Identifier, "in");
+            string table = expectToken(TokenType.Identifier).Value;
+
+            return new CreateColumnNode(location, column, table, position);
+        }
+        private CreateTableNode parseCreateTable()
+        {
+            var location = currentToken.SourceLocation;
+            
             expectToken(TokenType.Identifier, "table");
             string table = expectToken(TokenType.Identifier).Value;
             expectToken(TokenType.Identifier, "with");
             ListNode columns = parseList();
 
             return new CreateTableNode(location, table, columns);
+        }
+
+        private AstNode parseDelete()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "delete");
+
+            if (matchToken(TokenType.Identifier, "column"))
+                return parseDeleteColumn();
+            else if (matchToken(TokenType.Identifier, "row"))
+                return parseDeleteRow();
+            else if (matchToken(TokenType.Identifier, "table"))
+                return parseDeleteTable();
+            else
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'column' or 'table'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+        }
+        private DeleteColumnNode parseDeleteColumn()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "column");
+            string column = expectToken(TokenType.Identifier).Value;
+            expectToken(TokenType.Identifier, "from");
+            string table = expectToken(TokenType.Identifier).Value;
+
+            return new DeleteColumnNode(location, column, table);
+        }
+        private DeleteRowNode parseDeleteRow()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "row");
+            expectToken(TokenType.Identifier, "from");
+            string table = expectToken(TokenType.Identifier).Value;
+
+            AstNode locator;
+            if (acceptToken(TokenType.Identifier, "at"))
+                locator = parseList();
+            else if (matchToken(TokenType.Identifier, "where"))
+                locator = parseWhere();
+            else
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'at' or 'where'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+
+            if (locator is WhereNode)
+                return new DeleteRowNode(location, table, locator as WhereNode);
+            else
+                return new DeleteRowNode(location, table, locator as ListNode);
+        }
+        private DeleteTableNode parseDeleteTable()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "table");
+            string table = expectToken(TokenType.Identifier).Value;
+
+            return new DeleteTableNode(location, table);
         }
 
         private FilterNode parseFilter()
@@ -142,6 +230,43 @@ namespace TextualDB.CommandLine
             } while (acceptToken(TokenType.Comma));
 
             return new ListNode(location, elements);
+        }
+
+        private AstNode parseRename()
+        {
+            expectToken(TokenType.Identifier, "rename");
+            var location = currentToken.SourceLocation;
+
+            if (matchToken(TokenType.Identifier, "column"))
+                return parseRenameColumn();
+            else if (matchToken(TokenType.Identifier, "table"))
+                return parseRenameTable();
+            else
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'column' or 'table'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+        }
+        private RenameColumnNode parseRenameColumn()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "column");
+            string oldName = expectToken(TokenType.Identifier).Value;
+            expectToken(TokenType.Identifier, "to");
+            string newName = expectToken(TokenType.Identifier).Value;
+            expectToken(TokenType.Identifier, "in");
+            string table = expectToken(TokenType.Identifier).Value;
+
+            return new RenameColumnNode(location, table, oldName, newName);
+        }
+        private RenameTableNode parseRenameTable()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "table");
+            string oldName = expectToken(TokenType.Identifier).Value;
+            expectToken(TokenType.Identifier, "to");
+            string newName = expectToken(TokenType.Identifier).Value;
+
+            return new RenameTableNode(location, oldName, newName);
         }
 
         private SelectNode parseSelect()

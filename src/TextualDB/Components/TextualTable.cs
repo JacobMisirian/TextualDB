@@ -10,7 +10,7 @@ namespace TextualDB.Components
 {
     public class TextualTable
     {
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
         public List<string> Columns { get; private set; }
         public int ColumnLength { get { int total = 0; foreach (var col in Columns) total += col.Length + 2; return total + 2; } }
@@ -89,6 +89,13 @@ namespace TextualDB.Components
             return Columns.Contains(name);
         }
 
+        public TextualRow GetRow(int pos)
+        {
+            if (pos < 0 || pos >= Rows.Count)
+                throw new RowNotFoundException(this, pos);
+            return Rows[pos];
+        }
+
         public void RemoveColumn(string name)
         {
             if (!ContainsColumn(name))
@@ -98,6 +105,13 @@ namespace TextualDB.Components
 
             foreach (var row in Rows)
                 row.RemoveValue(name);
+        }
+
+        public void RemoveRow(TextualRow row)
+        {
+            if (!Rows.Contains(row))
+                throw new RowNotFoundException(this, row);
+            Rows.Remove(row);
         }
 
         public TextualTable Select(params string[] columns)
