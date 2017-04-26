@@ -228,6 +228,40 @@ namespace TextualDB.CommandLine
                 result.TextResult.AppendLine(table);
         }
 
+        public void Accept(UpdateNode node)
+        {
+            var table = database.GetTable(node.Table);
+
+            if (node.Positions != null)
+            {
+                foreach (var pos in node.Positions.Elements)
+                {
+                    if (!(pos is NumberNode))
+                        throw new CommandLineVisitorException(node.SourceLocation, "Position was not a number!");
+                    int position = ((NumberNode)pos).Number;
+                    var row = table.GetRow(position);
+
+                    foreach (var pair in node.Values)
+                        row.AddValue(pair.Key, pair.Value);
+                }
+            }
+            else
+            {
+                result.TableResult = table;
+                Accept(node.Where);
+
+                foreach (var row in result.TableResult.Rows)
+                {
+                    foreach (var pair in node.Values)
+                        row.AddValue(pair.Key, pair.Value);
+                }
+            }
+
+            Save();
+
+            result.TableResult = null;
+        }
+
         public void Accept(WhereNode node)
         {
             if (result.TableResult == null)

@@ -41,6 +41,8 @@ namespace TextualDB.CommandLine
                 return new ShowNode(location);
             else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
+            else if (matchToken(TokenType.Identifier, "update"))
+                return parseUpdate();
             else if (matchToken(TokenType.Identifier))
                 return new IdentifierNode(currentToken.SourceLocation, expectToken(TokenType.Identifier).Value);
             else if (matchToken(TokenType.Number))
@@ -115,12 +117,11 @@ namespace TextualDB.CommandLine
         }
         private DeleteRowNode parseDeleteRow()
         {
-            var location = currentToken.SourceLocation;
-
             expectToken(TokenType.Identifier, "row");
             expectToken(TokenType.Identifier, "from");
             string table = expectToken(TokenType.Identifier).Value;
 
+            var location = currentToken.SourceLocation;
             AstNode locator;
             if (acceptToken(TokenType.Identifier, "at"))
                 locator = parseList();
@@ -292,6 +293,38 @@ namespace TextualDB.CommandLine
                 where = new WhereNode(location, new FilterNode[0]);
 
             return new SelectNode(location, columns, table, where);
+        }
+
+        private UpdateNode parseUpdate()
+        {
+            expectToken(TokenType.Identifier, "update");
+            string table = expectToken(TokenType.Identifier).Value;
+            expectToken(TokenType.Identifier, "values");
+
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            do
+            {
+                string key = expectToken(TokenType.Identifier).Value;
+                expectToken(TokenType.Comparison, "=");
+                string val = expectToken(TokenType.String).Value;
+
+                values.Add(key, val);
+            }
+            while (acceptToken(TokenType.Comma));
+
+            var location = currentToken.SourceLocation;
+            AstNode locator;
+            if (acceptToken(TokenType.Identifier, "at"))
+                locator = parseList();
+            else if (matchToken(TokenType.Identifier, "where"))
+                locator = parseWhere();
+            else
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'at' or 'where'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+
+            if (locator is WhereNode)
+                return new UpdateNode(location, table, values, locator as WhereNode);
+            else
+                return new UpdateNode(location, table, values, locator as ListNode);
         }
 
         private WhereNode parseWhere()
