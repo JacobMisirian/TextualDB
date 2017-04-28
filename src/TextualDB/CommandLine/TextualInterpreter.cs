@@ -221,11 +221,21 @@ namespace TextualDB.CommandLine
             result.TableResult = result.TableResult.Select(columns.ToArray());
         }
 
-        public void Accept(ShowNode node)
+        public void Accept(ShowColumnsNode node)
         {
-            result.TextResult.AppendFormat("Tables ({0}):\n", database.FilePath);
+            var table = database.GetTable(node.Table);
+            result.TableResult = new TextualTable(node.Table, "column");
+
+            foreach (var column in table.Columns)
+                result.TableResult.AddRow(-1, column);
+        }
+
+        public void Accept(ShowTablesNode node)
+        {
+            result.TableResult = new TextualTable(database.FilePath, "table");
+
             foreach (var table in database.Tables.Keys)
-                result.TextResult.AppendLine(table);
+                result.TableResult.AddRow(-1, table);
         }
 
         public void Accept(UpdateNode node)

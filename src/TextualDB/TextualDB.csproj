@@ -58,6 +58,8 @@
     <Compile Include="CommandLine\Ast\RenameColumnNode.cs" />
     <Compile Include="CommandLine\Ast\RenameTableNode.cs" />
     <Compile Include="CommandLine\Ast\SelectNode.cs" />
+    <Compile Include="CommandLine\Ast\ShowColumnsNode.cs" />
+    <Compile Include="CommandLine\Ast\ShowTablesNode.cs" />
     <Compile Include="CommandLine\Ast\UpdateNode.cs" />
     <Compile Include="CommandLine\Ast\WhereNode.cs" />
     <Compile Include="CommandLine\IVisitor.cs" />
@@ -81,7 +83,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer\TextualSerializer.cs" />
-    <Compile Include="CommandLine\Ast\ShowNode.cs" />
     <Compile Include="CommandLine\TextualInterpreter.cs" />
     <Compile Include="CommandLine\TextualInterpreterResult.cs" />
   </ItemGroup>

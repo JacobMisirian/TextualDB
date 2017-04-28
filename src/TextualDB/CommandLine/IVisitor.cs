@@ -17,7 +17,8 @@ namespace TextualDB.CommandLine
         void Accept(RenameColumnNode node);
         void Accept(RenameTableNode node);
         void Accept(SelectNode node);
-        void Accept(ShowNode node);
+        void Accept(ShowColumnsNode node);
+        void Accept(ShowTablesNode node);
         void Accept(UpdateNode node);
         void Accept(WhereNode node);
     }

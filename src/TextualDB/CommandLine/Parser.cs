@@ -37,8 +37,8 @@ namespace TextualDB.CommandLine
                 return parseInsert();
             else if (matchToken(TokenType.Identifier, "rename"))
                 return parseRename();
-            else if (acceptToken(TokenType.Identifier, "show"))
-                return new ShowNode(location);
+            else if (matchToken(TokenType.Identifier, "show"))
+                return parseShow();
             else if (matchToken(TokenType.Identifier, "select"))
                 return parseSelect();
             else if (matchToken(TokenType.Identifier, "update"))
@@ -293,6 +293,38 @@ namespace TextualDB.CommandLine
                 where = new WhereNode(location, new FilterNode[0]);
 
             return new SelectNode(location, columns, table, where);
+        }
+
+        private AstNode parseShow()
+        {
+            var location = currentToken.SourceLocation;
+
+            expectToken(TokenType.Identifier, "show");
+
+            if (matchToken(TokenType.Identifier, "columns"))
+                return parseShowColumns();
+            else if (matchToken(TokenType.Identifier, "tables"))
+                return parseShowTables();
+            else
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'column' or 'table'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+        }
+
+        private ShowColumnsNode parseShowColumns()
+        {
+            expectToken(TokenType.Identifier, "columns");
+            expectToken(TokenType.Identifier, "in");
+            var location = currentToken.SourceLocation;
+            string table = expectToken(TokenType.Identifier).Value;
+
+            return new ShowColumnsNode(location, table);
+        }
+
+        private ShowTablesNode parseShowTables()
+        {
+            var location = currentToken.SourceLocation;
+            expectToken(TokenType.Identifier, "tables");
+
+            return new ShowTablesNode(location);
         }
 
         private UpdateNode parseUpdate()
