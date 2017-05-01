@@ -67,6 +67,11 @@ namespace TextualDB.Deserializer.Lexer
                         case '|':
                             add(TokenType.Pipe, ((char)readChar()).ToString());
                             break;
+                        case '{':
+                            readChar();
+                            add(TokenType.Placeholder, ((char)readChar()).ToString());
+                            readChar();
+                            break;
                         case '?':
                             add(TokenType.QuestionMark, ((char)readChar()).ToString());
                             break;

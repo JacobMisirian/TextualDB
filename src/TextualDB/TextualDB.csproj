@@ -81,6 +81,7 @@
     <Compile Include="Exceptions\TableExistsException.cs" />
     <Compile Include="Exceptions\TableNotFoundException.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="TextualCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer\TextualSerializer.cs" />
     <Compile Include="CommandLine\TextualInterpreter.cs" />

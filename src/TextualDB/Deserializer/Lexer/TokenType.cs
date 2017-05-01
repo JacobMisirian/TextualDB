@@ -11,6 +11,7 @@
 		Identifier,
 		Number,
 		Pipe,
+		Placeholder,
         QuestionMark,
 		String
     }
