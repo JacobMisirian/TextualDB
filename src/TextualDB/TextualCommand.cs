@@ -60,6 +60,7 @@ namespace TextualDB
                     
                     if (Placeholders.ContainsKey(place))
                         tokens[i] = new Token(tokens[i].SourceLocation, TokenType.String, Placeholders[place]);
+                    
                 }
             }
             

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using TextualDB.CommandLine;
@@ -12,6 +12,7 @@ namespace TextualDB
     {
         static void Main(string[] args)
         {
+            //Test(args);
             var interpreter = new TextualInterpreter();
             while (true)
             {
@@ -59,6 +60,17 @@ namespace TextualDB
                     Console.WriteLine(ex.Message);
                 }
             }
+        }
+        
+        public static void Test(string[] args)
+        {
+            var database = new TextualParser(new Scanner().Scan(args[0], File.ReadAllText(args[0]))).ParseDatabase(args[0]);
+            
+            var command = new TextualCommand(database, "select * from people where first={0}");
+            command.AddPlaceholder(0, args[1]);
+            
+            Console.WriteLine(command.Execute().TableResult);
+            Environment.Exit(0);
         }
     }
 }
