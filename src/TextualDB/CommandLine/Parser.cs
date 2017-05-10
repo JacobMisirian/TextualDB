@@ -12,7 +12,7 @@ namespace TextualDB.CommandLine
         private List<Token> tokens;
         private int position;
 
-        private Token currentToken { get { return tokens[position]; } }
+        private Token currentToken { get { return eof ? tokens[position - 1] : tokens[position]; } }
         private bool eof { get { return position >= tokens.Count; } }
 
         public Parser(List<Token> tokens)
