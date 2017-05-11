@@ -390,7 +390,7 @@ namespace TextualDB.CommandLine
         {
             if (eof)
                 return false;
-            return currentToken.TokenType == tokenType && currentToken.Value == val;
+            return currentToken.TokenType == tokenType && currentToken.Value.ToLower() == val.ToLower();
         }
 
         private bool acceptToken(TokenType tokenType)
