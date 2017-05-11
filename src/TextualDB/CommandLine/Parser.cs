@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using TextualDB.CommandLine.Ast;
@@ -286,13 +286,18 @@ namespace TextualDB.CommandLine
 
             string table = expectToken(TokenType.Identifier).Value;
 
-            WhereNode where;
+            AstNode locator;
             if (matchToken(TokenType.Identifier, "where"))
-                where = parseWhere();
+                locator = parseWhere();
+            else if (acceptToken(TokenType.Identifier, "at"))
+                locator = parseList();
             else
-                where = new WhereNode(location, new FilterNode[0]);
+                locator = new WhereNode(location, new FilterNode[0]);
 
-            return new SelectNode(location, columns, table, where);
+            if (locator is ListNode)
+                return new SelectNode(location, columns, table, locator as ListNode);
+            else
+                return new SelectNode(location, columns, table, locator as WhereNode);
         }
 
         private AstNode parseShow()

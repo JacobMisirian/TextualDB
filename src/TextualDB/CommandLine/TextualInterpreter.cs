@@ -175,7 +175,20 @@ namespace TextualDB.CommandLine
         
         public void Accept(ListNode node)
         {
-
+            List<int> nums = new List<int>();
+            foreach (var position in node.Elements)
+            {
+                if (!(position is NumberNode))
+                    throw new CommandLineVisitorException(node.SourceLocation, "Position was not a number!");
+                nums.Add(Convert.ToInt32(((NumberNode)position).Number));
+            }
+            
+            var table = new TextualTable(result.TableResult.Name, result.TableResult.Columns.ToArray());
+            
+            foreach (var num in nums)
+                table.AddRow(result.TableResult.GetRow(num).ChangeOwner(table));
+                
+            result.TableResult = table;
         }
 
         public void Accept(NumberNode node)
@@ -207,7 +220,10 @@ namespace TextualDB.CommandLine
         {
             result.TableResult = database.GetTable(node.Table);
 
-            Accept(node.Where);
+            if (node.Positions == null)
+                Accept(node.Where);
+            else
+                Accept(node.Positions);
 
             List<string> columns = new List<string>();
 

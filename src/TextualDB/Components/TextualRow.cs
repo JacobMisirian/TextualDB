@@ -17,6 +17,13 @@ namespace TextualDB.Components
             Values = new Dictionary<string, TextualData>();
         }
 
+        public TextualRow ChangeOwner(TextualTable newOwner)
+        {
+            Owner = newOwner;
+            
+            return this;
+        }
+
         private int columnPos = -1;
 
         public void StartAutoValueAdding()
