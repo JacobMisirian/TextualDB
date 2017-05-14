@@ -75,7 +75,7 @@
     <Compile Include="Exceptions\ColumnExistsException.cs" />
     <Compile Include="Exceptions\ColumnNotFoundException.cs" />
     <Compile Include="Exceptions\CommandLineParseException.cs" />
-    <Compile Include="Exceptions\CommandLineVisitorException.cs" />
+    <Compile Include="Exceptions\CommandLineInterpreterException.cs" />
     <Compile Include="Exceptions\DeserializerException.cs" />
     <Compile Include="Exceptions\RowNotFoundException.cs" />
     <Compile Include="Exceptions\TableExistsException.cs" />

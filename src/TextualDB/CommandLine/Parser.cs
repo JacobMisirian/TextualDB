@@ -153,29 +153,32 @@ namespace TextualDB.CommandLine
 
             TextualFilterType filterType;
 
-            switch (expectToken(TokenType.Comparison).Value)
-            {
-                case "=":
-                    filterType = TextualFilterType.Equal;
-                    break;
-                case "!=":
-                    filterType = TextualFilterType.NotEqual;
-                    break;
-                case "<":
-                    filterType = TextualFilterType.Lesser;
-                    break;
-                case "<=":
-                    filterType = TextualFilterType.LesserOrEqual;
-                    break;
-                case ">":
-                    filterType = TextualFilterType.Greater;
-                    break;
-                case ">=":
-                    filterType = TextualFilterType.GreaterOrEqual;
-                    break;
-                default:
-                    throw new CommandLineParseException(location, "Unknown operation {0}!", tokens[position - 1].Value);
-            }
+            if (acceptToken(TokenType.Identifier, "contains"))
+                filterType = TextualFilterType.Contains;
+            else
+                switch (expectToken(TokenType.Comparison).Value)
+                {
+                    case "=":
+                        filterType = TextualFilterType.Equal;
+                        break;
+                    case "!=":
+                        filterType = TextualFilterType.NotEqual;
+                        break;
+                    case "<":
+                        filterType = TextualFilterType.Lesser;
+                        break;
+                    case "<=":
+                        filterType = TextualFilterType.LesserOrEqual;
+                        break;
+                    case ">":
+                        filterType = TextualFilterType.Greater;
+                        break;
+                    case ">=":
+                        filterType = TextualFilterType.GreaterOrEqual;
+                        break;
+                    default:
+                        throw new CommandLineParseException(location, "Unknown operation {0}!", tokens[position - 1].Value);
+                }
 
             string value;
             if (matchToken(TokenType.String))

@@ -39,7 +39,7 @@ namespace TextualDB.CommandLine
             foreach (var element in node.Columns.Elements)
             {
                 if (!(element is IdentifierNode))
-                    throw new CommandLineVisitorException(node.SourceLocation, "Column was not an identifier!");
+                    throw new CommandLineInterpreterException(node.SourceLocation, "Column was not an identifier!");
                 columns.Add(((IdentifierNode)element).Identifier);
             }
 
@@ -65,7 +65,7 @@ namespace TextualDB.CommandLine
                 foreach (var pos in node.Positions.Elements)
                 {
                     if (!(pos is NumberNode))
-                        throw new CommandLineVisitorException(node.SourceLocation, "Position was not a number!");
+                        throw new CommandLineInterpreterException(node.SourceLocation, "Position was not a number!");
                     int position = ((NumberNode)pos).Number;
 
                     rows.Add(table.GetRow(position));
@@ -103,6 +103,10 @@ namespace TextualDB.CommandLine
             {
                 switch (node.FilterType)
                 {
+                    case TextualFilterType.Contains:
+                        if (row.GetValue(node.Column).Value.Contains(node.Target))
+                            table.AddRow(row);
+                        break;
                     case TextualFilterType.Equal:
                         if (row.GetValue(node.Column).Value == node.Target)
                             table.AddRow(row);
@@ -179,7 +183,7 @@ namespace TextualDB.CommandLine
             foreach (var position in node.Elements)
             {
                 if (!(position is NumberNode))
-                    throw new CommandLineVisitorException(node.SourceLocation, "Position was not a number!");
+                    throw new CommandLineInterpreterException(node.SourceLocation, "Position was not a number!");
                 nums.Add(Convert.ToInt32(((NumberNode)position).Number));
             }
             
@@ -230,7 +234,7 @@ namespace TextualDB.CommandLine
             foreach (var column in node.Columns.Elements)
             {
                 if (!(column is IdentifierNode))
-                    throw new CommandLineVisitorException(node.SourceLocation, "Column was not an identifier!");
+                    throw new CommandLineInterpreterException(node.SourceLocation, "Column was not an identifier!");
                 columns.Add(((IdentifierNode)column).Identifier);
             }
 
@@ -263,7 +267,7 @@ namespace TextualDB.CommandLine
                 foreach (var pos in node.Positions.Elements)
                 {
                     if (!(pos is NumberNode))
-                        throw new CommandLineVisitorException(node.SourceLocation, "Position was not a number!");
+                        throw new CommandLineInterpreterException(node.SourceLocation, "Position was not a number!");
                     int position = ((NumberNode)pos).Number;
                     var row = table.GetRow(position);
 
@@ -291,7 +295,7 @@ namespace TextualDB.CommandLine
         public void Accept(WhereNode node)
         {
             if (result.TableResult == null)
-                throw new CommandLineVisitorException(node.SourceLocation, "Unexpected where expression!");
+                throw new CommandLineInterpreterException(node.SourceLocation, "Unexpected where expression!");
             foreach (var filter in node.Filters)
                 filter.Visit(this);
         }

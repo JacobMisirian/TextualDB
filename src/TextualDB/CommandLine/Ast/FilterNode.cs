@@ -33,6 +33,7 @@ namespace TextualDB.CommandLine.Ast
 
     public enum TextualFilterType
     {
+        Contains,
         Equal,
         NotEqual,
         Greater,

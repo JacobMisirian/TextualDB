@@ -34,4 +34,5 @@ first | last | age |
 The table starts with the table name, "people", followed by a colon. The next line contains a pipe (|)
 separated list of the column names. After this column list begins the rows. Each row starts and ends with
 a pipe (|) and has strings split by pipe (|) characters. Each row has a line above and below of hyphen (-)
-characters that extend to the end of the row.
+characters that extend to the end of the row. After all of the rows are written, the table is terminated with
+a question-mark (?).

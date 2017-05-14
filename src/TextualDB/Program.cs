@@ -43,7 +43,7 @@ namespace TextualDB
                 {
                     Console.WriteLine(ex.Message);
                 }
-                catch (CommandLineVisitorException ex)
+                catch (CommandLineInterpreterException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
