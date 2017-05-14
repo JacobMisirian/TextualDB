@@ -102,7 +102,7 @@ namespace TextualDB.CommandLine
             else if (matchToken(TokenType.Identifier, "table"))
                 return parseDeleteTable();
             else
-                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'column' or 'table'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
+                throw new CommandLineParseException(location, "Expected token of type Identifier with value 'column', 'row', or 'table'. Got {0} with value '{1}'!", currentToken.TokenType, currentToken.Value);
         }
         private DeleteColumnNode parseDeleteColumn()
         {

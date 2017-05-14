@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-using TextualDB.CommandLine;
+using TextualDB.Components;
 using TextualDB.Deserializer;
 using TextualDB.Deserializer.Lexer;
 using TextualDB.Exceptions;
@@ -12,24 +12,20 @@ namespace TextualDB
     {
         static void Main(string[] args)
         {
-            //Test(args);
-            var interpreter = new TextualInterpreter();
             while (true)
             {
-                var database = new TextualParser(new Scanner().Scan(args[0], File.ReadAllText(args[0]))).ParseDatabase(args[0]);
+                var database = TextualDatabase.FromFile(args[0]);
                 try
                 {
                     Console.Write("> ");
-                    string command = Console.ReadLine();
-                    if (command.Trim() == string.Empty)
+                    string input = Console.ReadLine();
+                    if (input.Trim() == string.Empty)
                         continue;
 
-                    var tokens = new Scanner().Scan("stdin", command);
-                    var ast = new Parser(tokens).Parse();
+                    var command = new TextualCommand(database, input);
 
-                    var result = interpreter.Execute(ast, database);
-                    Console.WriteLine(result.TableResult);
-                    Console.WriteLine(result.TextResult.ToString());
+                    var result = command.Execute();
+                    Console.WriteLine(result);
                 }
                 catch (ColumnExistsException ex)
                 {
@@ -60,17 +56,6 @@ namespace TextualDB
                     Console.WriteLine(ex.Message);
                 }
             }
-        }
-        
-        public static void Test(string[] args)
-        {
-            var database = new TextualParser(new Scanner().Scan(args[0], File.ReadAllText(args[0]))).ParseDatabase(args[0]);
-            
-            var command = new TextualCommand(database, "select * from people where first={0}");
-            command.AddPlaceholder(0, args[1]);
-            
-            Console.WriteLine(command.Execute().TableResult);
-            Environment.Exit(0);
         }
     }
 }

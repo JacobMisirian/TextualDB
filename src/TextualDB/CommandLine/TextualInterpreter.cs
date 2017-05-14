@@ -11,12 +11,11 @@ namespace TextualDB.CommandLine
     public class TextualInterpreter : IVisitor
     {
         private TextualDatabase database;
-        private TextualInterpreterResult result;
+        private TextualTable result;
 
-        public TextualInterpreterResult Execute(AstNode ast, TextualDatabase database)
+        public TextualTable Execute(AstNode ast, TextualDatabase database)
         {
             this.database = database;
-            result = new TextualInterpreterResult();
 
             ast.Visit(this);
 
@@ -76,16 +75,16 @@ namespace TextualDB.CommandLine
             }
             else
             {
-                result.TableResult = table;
+                result = table;
                 Accept(node.Where);
 
-                foreach (var row in result.TableResult.Rows)
+                foreach (var row in result.Rows)
                     table.RemoveRow(row);
             }
 
             Save();
 
-            result.TableResult = null;
+            result = null;
         }
 
         public void Accept(DeleteTableNode node)
@@ -97,9 +96,9 @@ namespace TextualDB.CommandLine
        
         public void Accept(FilterNode node)
         {
-            TextualTable table = new TextualTable(result.TableResult.Name, result.TableResult.Columns.ToArray());
+            TextualTable table = new TextualTable(result.Name, result.Columns.ToArray());
 
-            foreach (var row in result.TableResult.Rows)
+            foreach (var row in result.Rows)
             {
                 switch (node.FilterType)
                 {
@@ -150,7 +149,7 @@ namespace TextualDB.CommandLine
                 }
             }
 
-            result.TableResult = table;
+            result = table;
         }
 
         public void Accept(IdentifierNode node)
@@ -174,7 +173,7 @@ namespace TextualDB.CommandLine
 
             Save();
 
-            result.TableResult = null;
+            result = null;
         }
         
         public void Accept(ListNode node)
@@ -187,12 +186,12 @@ namespace TextualDB.CommandLine
                 nums.Add(Convert.ToInt32(((NumberNode)position).Number));
             }
             
-            var table = new TextualTable(result.TableResult.Name, result.TableResult.Columns.ToArray());
+            var table = new TextualTable(result.Name, result.Columns.ToArray());
             
             foreach (var num in nums)
-                table.AddRow(result.TableResult.GetRow(num).ChangeOwner(table));
+                table.AddRow(result.GetRow(num).ChangeOwner(table));
                 
-            result.TableResult = table;
+            result = table;
         }
 
         public void Accept(NumberNode node)
@@ -222,7 +221,7 @@ namespace TextualDB.CommandLine
 
         public void Accept(SelectNode node)
         {
-            result.TableResult = database.GetTable(node.Table);
+            result = database.GetTable(node.Table);
 
             if (node.Positions == null)
                 Accept(node.Where);
@@ -238,24 +237,24 @@ namespace TextualDB.CommandLine
                 columns.Add(((IdentifierNode)column).Identifier);
             }
 
-            result.TableResult = result.TableResult.Select(columns.ToArray());
+            result = result.Select(columns.ToArray());
         }
 
         public void Accept(ShowColumnsNode node)
         {
             var table = database.GetTable(node.Table);
-            result.TableResult = new TextualTable(node.Table, "column");
+            result = new TextualTable(node.Table, "column");
 
             foreach (var column in table.Columns)
-                result.TableResult.AddRow(-1, column);
+                result.AddRow(-1, column);
         }
 
         public void Accept(ShowTablesNode node)
         {
-            result.TableResult = new TextualTable(database.FilePath, "table");
+            result = new TextualTable(database.FilePath, "table");
 
             foreach (var table in database.Tables.Keys)
-                result.TableResult.AddRow(-1, table);
+                result.AddRow(-1, table);
         }
 
         public void Accept(UpdateNode node)
@@ -277,10 +276,10 @@ namespace TextualDB.CommandLine
             }
             else
             {
-                result.TableResult = table;
+                result = table;
                 Accept(node.Where);
 
-                foreach (var row in result.TableResult.Rows)
+                foreach (var row in result.Rows)
                 {
                     foreach (var pair in node.Values)
                         row.AddValue(pair.Key, pair.Value);
@@ -289,12 +288,12 @@ namespace TextualDB.CommandLine
 
             Save();
 
-            result.TableResult = null;
+            result = null;
         }
 
         public void Accept(WhereNode node)
         {
-            if (result.TableResult == null)
+            if (result == null)
                 throw new CommandLineInterpreterException(node.SourceLocation, "Unexpected where expression!");
             foreach (var filter in node.Filters)
                 filter.Visit(this);

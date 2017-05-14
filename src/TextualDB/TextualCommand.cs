@@ -48,7 +48,7 @@ namespace TextualDB
             return this;
         }
         
-        public TextualInterpreterResult Execute()
+        public TextualTable Execute()
         {
             var tokens = new Scanner().Scan("interpreter", CommandString);
             

@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using TextualDB.Deserializer;
+using TextualDB.Deserializer.Lexer;
 using TextualDB.Exceptions;
 
 namespace TextualDB.Components
 {
     public class TextualDatabase
     {
+        public static TextualDatabase FromFile(string filePath)
+        {
+            return new TextualParser(new Scanner().Scan(filePath, File.ReadAllText(filePath))).ParseDatabase(filePath);
+        }
         public string FilePath { get; private set; }
         
         public Dictionary<string, TextualTable> Tables { get; private set; }
