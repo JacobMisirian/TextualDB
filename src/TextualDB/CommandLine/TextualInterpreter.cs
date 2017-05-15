@@ -103,21 +103,21 @@ namespace TextualDB.CommandLine
                 switch (node.FilterType)
                 {
                     case TextualFilterType.Contains:
-                        if (row.GetValue(node.Column).Value.Contains(node.Target))
+                        if (row.GetValue(node.Column).Contains(node.Target))
                             table.AddRow(row);
                         break;
                     case TextualFilterType.Equal:
-                        if (row.GetValue(node.Column).Value == node.Target)
+                        if (row.GetValue(node.Column) == node.Target)
                             table.AddRow(row);
                         break;
                     case TextualFilterType.NotEqual:
-                        if (row.GetValue(node.Column).Value != node.Target)
+                        if (row.GetValue(node.Column) != node.Target)
                             table.AddRow(row);
                         break;
                     case TextualFilterType.Greater:
                         try
                         {
-                            if (Convert.ToDouble(row.GetValue(node.Column).Value) > Convert.ToDouble(node.Target))
+                            if (Convert.ToDouble(row.GetValue(node.Column)) > Convert.ToDouble(node.Target))
                                 table.AddRow(row);
                         }
                         catch { }
@@ -125,7 +125,7 @@ namespace TextualDB.CommandLine
                     case TextualFilterType.GreaterOrEqual:
                         try
                         {
-                            if (Convert.ToDouble(row.GetValue(node.Column).Value) >= Convert.ToDouble(node.Target))
+                            if (Convert.ToDouble(row.GetValue(node.Column)) >= Convert.ToDouble(node.Target))
                                 table.AddRow(row);
                         }
                         catch { }
@@ -133,7 +133,7 @@ namespace TextualDB.CommandLine
                     case TextualFilterType.Lesser:
                         try
                         {
-                            if (Convert.ToDouble(row.GetValue(node.Column).Value) < Convert.ToDouble(node.Target))
+                            if (Convert.ToDouble(row.GetValue(node.Column)) < Convert.ToDouble(node.Target))
                                 table.AddRow(row);
                         }
                         catch { }
@@ -141,7 +141,7 @@ namespace TextualDB.CommandLine
                     case TextualFilterType.LesserOrEqual:
                         try
                         {
-                            if (Convert.ToDouble(row.GetValue(node.Column).Value) <= Convert.ToDouble(node.Target))
+                            if (Convert.ToDouble(row.GetValue(node.Column)) <= Convert.ToDouble(node.Target))
                                 table.AddRow(row);
                         }
                         catch { }
@@ -243,7 +243,7 @@ namespace TextualDB.CommandLine
         public void Accept(ShowColumnsNode node)
         {
             var table = database.GetTable(node.Table);
-            result = new TextualTable(node.Table, "column");
+            result = new TextualTable(node.Table, new string[] { "column" } );
 
             foreach (var column in table.Columns)
                 result.AddRow(-1, column);
@@ -251,7 +251,7 @@ namespace TextualDB.CommandLine
 
         public void Accept(ShowTablesNode node)
         {
-            result = new TextualTable(database.FilePath, "table");
+            result = new TextualTable(database.FilePath, new string[] { "table" } );
 
             foreach (var table in database.Tables.Keys)
                 result.AddRow(-1, table);

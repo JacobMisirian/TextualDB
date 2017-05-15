@@ -56,7 +56,7 @@ namespace TextualDB.Serializer
             int hyphenLength = 0;
 
             foreach (var val in row.Values.Values)
-                hyphenLength += val.Value.Length + 4;
+                hyphenLength += val.Length + 4;
 
             hyphenLength += 4;
 
@@ -70,7 +70,7 @@ namespace TextualDB.Serializer
 
             writer.Write("| ");
             foreach (var col in row.Owner.Columns)
-                writer.Write(string.Format("\"{0}\" | ", row.Values.ContainsKey(col) ? row.Values[col].Value : string.Empty));
+                writer.Write(string.Format("\"{0}\" | ", row.Values.ContainsKey(col) ? row.Values[col] : string.Empty));
             writer.WriteLine();
         }
     }

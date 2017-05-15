@@ -64,9 +64,7 @@
     <Compile Include="CommandLine\Ast\WhereNode.cs" />
     <Compile Include="CommandLine\IVisitor.cs" />
     <Compile Include="CommandLine\Parser.cs" />
-    <Compile Include="Components\TextualData.cs" />
     <Compile Include="Components\TextualDatabase.cs" />
-    <Compile Include="Components\TextualDataType.cs" />
     <Compile Include="Components\TextualRow.cs" />
     <Compile Include="Deserializer\Lexer\Scanner.cs" />
     <Compile Include="Deserializer\Lexer\Token.cs" />
