@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\TextualDB.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -87,10 +88,16 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="Deserializer\Lexer\TokenType.cs" />
+    <None Include="xmldoc2md.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\TextualTable.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="xmldoc2md.xsl" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>Powershell.exe -ExecutionPolicy Unrestricted -file "$(ProjectDir)xmldoc2md.ps1" -xml "$(TargetDir)TextualDB.xml" -xsl "$(ProjectDir)xmldoc2md.xsl" -output "$(SolutionDir)TextualDB.md"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
