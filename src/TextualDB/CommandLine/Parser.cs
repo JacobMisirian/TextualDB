@@ -71,9 +71,10 @@ namespace TextualDB.CommandLine
             string column = expectToken(TokenType.Identifier).Value;
             expectToken(TokenType.Identifier, "in");
             int position = -1;
+            string table = expectToken(TokenType.Identifier).Value;
+            
             if (acceptToken(TokenType.Identifier, "at"))
                 position = Convert.ToInt32(expectToken(TokenType.Number).Value);
-            string table = expectToken(TokenType.Identifier).Value;
 
             return new CreateColumnNode(location, column, table, position);
         }
