@@ -1,114 +1,101 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-using TextualDB.Exceptions;
+using TextualDB.Components.Exceptions;
+using TextualDB.Serialization;
 
 namespace TextualDB.Components
 {
-    public class TextualRow
+    public class TextualRow : ISerializable
     {
-        /// <summary>
-        /// The TextualTable that the row belongs to
-        /// </summary>
-        public TextualTable Owner { get; private set; }
-        /// <summary>
-        /// A collection representing the columns and corresponding values
-        /// </summary>
-        public Dictionary<string, string> Values { get; private set; }
-        /// <summary>
-        /// Constructs a new TextualRow with the given owner table
-        /// </summary>
-        /// <param name="owner">The table for the new row to belong to</param>
-        public TextualRow(TextualTable owner)
-        {
-            Owner = owner;
+        public TextualTable ParentTable { get; private set; }
+        public Dictionary<string, object> Values { get; private set; }
 
-            Values = new Dictionary<string, string>();
-        }
-        /// <summary>
-        /// Changes the owner of the row to a new table
-        /// </summary>
-        /// <param name="newOwner">The new table owner for this row to belong to</param>
-        /// <returns>The current instance of TextualRow</returns>
-        public TextualRow ChangeOwner(TextualTable newOwner)
+        public TextualRow(TextualTable parentTable)
         {
-            Owner = newOwner;
-            
-            return this;
+            ParentTable = parentTable;
+            Values = new Dictionary<string, object>();
+
+            ValidateWithParent();
         }
 
-        private int columnPos = -1;
-        /// <summary>
-        /// Enters automatic value adding mode, to be used before TextualRow.AddValue(string)
-        /// </summary>
-        public void StartAutoValueAdding()
+        public TextualRow(TextualRow copy, TextualTable newParent = null)
         {
-            columnPos = 0;
-            foreach (var column in Owner.Columns)
-                Values.Add(column, string.Empty);
+            ParentTable = newParent ?? copy.ParentTable;
+            Values = copy.Values;
         }
-        /// <summary>
-        /// Resets automatic value adding mode, to be used after TextualRow.AddValue(string)
-        /// </summary>
-        public void EndAutoValueAdding()
-        {
-            columnPos = -1;
-        }
-        /// <summary>
-        /// Sets the given value of the next column, to be used after TextualRow.StartAutoValueAdding()
-        /// </summary>
-        /// <param name="value">The value to add</param>
-        /// <returns>The current instance of TextualRow</returns>
-        public TextualRow AddValue(string value)
-        {
-            Values[Owner.Columns[columnPos++]] = value;
-            return this;
-        }
-        /// <summary>
-        /// Sets the given value of the given column
-        /// </summary>
-        /// <param name="column">The column to set</param>
-        /// <param name="value">The value to set the column to</param>
-        /// <returns>The current instance of TextualRow</returns>
-        public TextualRow AddValue(string column, string value)
-        {
-            Values[column] = value;
-            return this;
-        }
-        /// <summary>
-        /// Changes the column name within the row, to be used internally
-        /// </summary>
-        /// <param name="oldName">The name of the column to be changed</param>
-        /// <param name="newName">The new name for the column to be changed to</param>
-        /// <returns></returns>
-        public TextualRow ChangeColumnName(string oldName, string newName)
-        {
-            var temp = Values[oldName];
-            Values.Remove(oldName);
-            Values.Add(newName, temp);
 
-            return this;
-        }
-        /// <summary>
-        /// Returns value of the given column within the row if the column exists, otherwise throws ColumnNotFoundException
-        /// </summary>
-        /// <param name="column">The name of the column to return</param>
-        /// <returns>The value at the given column</returns>
-        public string GetValue(string column)
+        public int CalculateLineLength()
         {
-            if (!Owner.ContainsColumn(column))
-                throw new ColumnNotFoundException(column, Owner);
+            int count = 4;
+            foreach (var entry in Values.Values)
+                count += entry.ToString().Length;
+            count += (Values.Count + 1);
+            count += (Values.Count * 2);
 
+            return count;
+        }
+
+        public object GetValue(string column)
+        {
+            if (!Values.ContainsKey(column))
+                throw new ColumnNotFoundException(ParentTable.ParentDatabase, ParentTable, column);
             return Values[column];
         }
-        /// <summary>
-        /// Removes the column within the row, to be used internally
-        /// </summary>
-        /// <param name="column">The name of the column to be removed</param>
-        /// <returns>The current instance of TextualRow</returns>
-        public TextualRow RemoveColumn(string column)
+
+        public void RenameColumn(string oldName, string newName)
         {
-            Values.Remove(column);
-            return this;
+            if (!Values.ContainsKey(oldName))
+                throw new ColumnNotFoundException(ParentTable.ParentDatabase, ParentTable, oldName);
+            if (Values.ContainsKey(newName))
+                throw new ColumnAlreadyExistsException(ParentTable.ParentDatabase, ParentTable, newName);
+
+            var tmp = Values[oldName];
+            Values.Remove(oldName);
+            Values.Add(newName, tmp);
+        }
+
+        public void SetValue(string column, object value)
+        {
+            if (!Values.ContainsKey(column))
+                throw new ColumnNotFoundException(ParentTable.ParentDatabase, ParentTable, column);
+            Values[column] = value;
+        }
+
+        private int valuePos = 0;
+        public void SetValueOrdered(object value)
+        {
+            if (valuePos < ParentTable.Columns.Count)
+                Values[ParentTable.Columns[valuePos++]] = value;
+        }
+
+        public void ValidateWithParent()
+        {
+            foreach (var column in ParentTable.Columns)
+                if (!Values.ContainsKey(column))
+                    Values.Add(column, string.Empty);
+
+            string[] columns = Values.Keys.ToArray();
+            for (int i = 0; i < columns.Length; i++)
+                if (!ParentTable.Columns.Contains(columns[i]))
+                    Values.Remove(columns[i]);
+        }
+
+        public void Serialize(StringBuilder sb)
+        {
+            // | 
+            sb.Append("|");
+            // "val1" | 2 | "val3" |
+            foreach (var column in ParentTable.Columns)
+            {
+                var val = Values[column];
+                if (val is double)
+                    sb.AppendFormat(" {0} |", val.ToString());
+                else
+                    sb.AppendFormat(" \"{0}\" |", val.ToString());
+            }
+            sb.Append('\n');
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26206.0
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextualDB", "TextualDB\TextualDB.csproj", "{42005512-2025-4D2F-A094-8088F6A9FFB4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextualDB", "TextualDB\TextualDB.csproj", "{9C46621C-5136-4C2D-A4AC-74BBC85E702C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,12 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{42005512-2025-4D2F-A094-8088F6A9FFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42005512-2025-4D2F-A094-8088F6A9FFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42005512-2025-4D2F-A094-8088F6A9FFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42005512-2025-4D2F-A094-8088F6A9FFB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C46621C-5136-4C2D-A4AC-74BBC85E702C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C46621C-5136-4C2D-A4AC-74BBC85E702C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C46621C-5136-4C2D-A4AC-74BBC85E702C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C46621C-5136-4C2D-A4AC-74BBC85E702C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59C9669F-D4E9-47E2-B9A3-92A432BB5879}
 	EndGlobalSection
 EndGlobal

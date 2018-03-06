@@ -1,215 +1,141 @@
 ﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 
-using TextualDB.Exceptions;
-using TextualDB.Serializer;
+using TextualDB.Components.Exceptions;
+using TextualDB.Serialization;
 
 namespace TextualDB.Components
 {
-    /// <summary>
-    /// Represents a TextualDB Table, defined by columns and containing subordinate rows
-    /// </summary>
-    public class TextualTable
+    public class TextualTable : ISerializable
     {
-        /// <summary>
-        /// The name of the table
-        /// </summary>
-        public string Name { get; set; }
-        /// <summary>
-        /// The columns of the table
-        /// </summary>
+        public string Name { get; private set; }
+        public TextualDatabase ParentDatabase { get; private set; }
+
         public List<string> Columns { get; private set; }
-        /// <summary>
-        /// The length of the list of columns expressed visually
-        /// </summary>
-        public int ColumnLength { get { int total = 0; foreach (var col in Columns) total += col.Length + 2; return total + 2; } }
-        /// <summary>
-        /// The rows of the table
-        /// </summary>
         public List<TextualRow> Rows { get; private set; }
-        /// <summary>
-        /// Constructs a new TextualDatabase with the given name and enumerable collection of string column names
-        /// </summary>
-        /// <param name="name">The name of the new table</param>
-        /// <param name="columns">The enumerable collection of string column names for the new table</param>
-        public TextualTable(string name, IEnumerable<string> columns)
+
+        public TextualTable(TextualDatabase parentDatabase, string name)
         {
             Name = name;
-            Columns = columns.ToList();
+            ParentDatabase = parentDatabase;
+
+            Columns = new List<string>();
             Rows = new List<TextualRow>();
         }
-        /// <summary>
-        /// Constructs a new TextualDatabase with the given name, enumerable collection of string column names, and list of rows
-        /// </summary>
-        /// <param name="name">The name of the new table</param>
-        /// <param name="columns">The enumerable collection of string column names for the new table</param>
-        /// <param name="rows">The list of rows for the new table</param>
-        public TextualTable(string name, IEnumerable<string> columns, List<TextualRow> rows)
-        {
-            Name = name;
-            Columns = columns.ToList();
-            Rows = rows;
-        }
-        /// <summary>
-        /// Adds a new column to the table with the given name at the optional index, default to the end
-        /// </summary>
-        /// <param name="name">The name of the new column</param>
-        /// <param name="pos">The optional index parameter for the position of the new column</param>
-        /// <returns>The current instance of TextualTable</returns>
-        public TextualTable AddColumn(string name, int pos = -1)
-        {
-            if (ContainsColumn(name))
-                throw new ColumnExistsException(name, this);
 
-            pos = pos == -1 ? Columns.Count : pos;
-
-            Columns.Insert(pos, name);
+        public void AddColumn(string name, int index = -1)
+        {
+            if (Columns.Contains(name))
+                throw new ColumnAlreadyExistsException(ParentDatabase, this, name);
+            if (index == -1)
+                Columns.Add(name);
+            else if (index < 0 || index > Columns.Count)
+                throw new ColumnIndexOutOfBoundsException(ParentDatabase, this, index);
+            else
+                Columns.Insert(index, name);
 
             foreach (var row in Rows)
-                row.AddValue(name, string.Empty);
-
-            return this;
+                row.ValidateWithParent();
         }
-        /// <summary>
-        /// Adds an existing row to the table at the optional index, default to the end
-        /// </summary>
-        /// <param name="row">The row to be added</param>
-        /// <param name="pos">The optional index parameter for the position of the new row</param>
-        public void AddRow(TextualRow row, int pos = -1)
+
+        public void AddRow(TextualRow row)
         {
-            pos = pos == -1 ? Rows.Count : pos;
-            Rows.Insert(pos, row);
+            Rows.Add(row);
         }
-        /// <summary>
-        /// Adds a new row to the table at the optional index, with a params array of string values
-        /// </summary>
-        /// <param name="pos">The optional index parameter for the position of the new row</param>
-        /// <param name="values">The params array of string values for the row</param>
-        public void AddRow(int pos = -1, params string[] values)
+        public void AddRow(TextualRow row, int index)
         {
-
-            var row = new TextualRow(this);
-
-            row.StartAutoValueAdding();
-
-            foreach (var val in values)
-                row.AddValue(val);
-
-            AddRow(row, pos);
+            if (index < 0 || index > Rows.Count)
+                throw new RowIndexOutOfBoundsException(ParentDatabase, this, index);
+            Rows.Insert(index, row);
         }
-        /// <summary>
-        /// Changes the name of a column within the table
-        /// </summary>
-        /// <param name="oldName">The name of the column to be changed</param>
-        /// <param name="newName">The new name for the column to be changed to</param>
-        /// <returns>The current instance of TextualTable</returns>
-        public TextualTable ChangeColumnName(string oldName, string newName)
-        {
-            if (!ContainsColumn(oldName))
-                throw new ColumnNotFoundException(oldName, this);
 
-            int index = Columns.IndexOf(oldName);
-            Columns.Remove(oldName);
-            Columns.Insert(index, newName);
+        public TextualRow GetRow(int index)
+        {
+            if (index < 0 || index >= Rows.Count)
+                throw new RowIndexOutOfBoundsException(ParentDatabase, this, index);
+            return Rows[index];
+        }
+
+        public void RenameColumn(string oldName, string newName)
+        {
+            if (!Columns.Contains(oldName))
+                throw new ColumnNotFoundException(ParentDatabase, this, oldName);
+            if (Columns.Contains(newName))
+                throw new ColumnAlreadyExistsException(ParentDatabase, this, newName);
+
+            Columns[Columns.IndexOf(oldName)] = newName;
 
             foreach (var row in Rows)
-                row.ChangeColumnName(oldName, newName);
+                row.RenameColumn(oldName, newName);
+        }
 
-            return this;
-        }
-        /// <summary>
-        /// Changes the name of the table
-        /// </summary>
-        /// <param name="newName">The new name of the table</param>
-        /// <returns>The current instance of TextualTable</returns>
-        public TextualTable ChangeTableName(string newName)
+        public void RemoveColumn(int index)
         {
-            Name = newName;
-            return this;
+            if (index < 0 || index >= Columns.Count)
+                throw new ColumnIndexOutOfBoundsException(ParentDatabase, this, index);
+            RemoveColumn(Columns[index]);
         }
-        /// <summary>
-        /// Returns true if the table contains a column with the given name
-        /// </summary>
-        /// <param name="name">The column name to check</param>
-        /// <returns>True if the table contains the given column, otherwise; false</returns>
-        public bool ContainsColumn(string name)
-        {
-            return Columns.Contains(name);
-        }
-        /// <summary>
-        /// Returns the row in the table at the given index if index exists, otherwise throws RowNotFoundException
-        /// </summary>
-        /// <param name="pos">The position in the table of the desired row</param>
-        /// <returns>The row at the given position</returns>
-        public TextualRow GetRow(int pos)
-        {
-            if (pos < 0 || pos >= Rows.Count)
-                throw new RowNotFoundException(this, pos);
-            return Rows[pos];
-        }
-        /// <summary>
-        /// Removes the column with the given name from the table if the column exists, otherwise throws ColumnNotFoundException
-        /// </summary>
-        /// <param name="name">The name of the table to remove</param>
         public void RemoveColumn(string name)
         {
-            if (!ContainsColumn(name))
-                throw new ColumnNotFoundException(name, this);
-
+            if (!Columns.Contains(name))
+                throw new ColumnNotFoundException(ParentDatabase, this, name);
             Columns.Remove(name);
-
             foreach (var row in Rows)
-                row.RemoveColumn(name);
+                row.ValidateWithParent();
         }
-        /// <summary>
-        /// Removes the given row from the table if the row belongs to this table, otherwise throws RowNotFoundException
-        /// </summary>
-        /// <param name="row">The row to remove from the table</param>
+
+        public void RemoveRow(int index)
+        {
+            if (index < 0 || index >= Rows.Count)
+                throw new RowIndexOutOfBoundsException(ParentDatabase, this, index);
+            RemoveRow(GetRow(index));
+        }
         public void RemoveRow(TextualRow row)
         {
             if (!Rows.Contains(row))
-                throw new RowNotFoundException(this, row);
+                throw new RowNotFoundException(ParentDatabase, this, row);
             Rows.Remove(row);
         }
-        /// <summary>
-        /// Returns a new table based on the current table that only contains columns from the given params string array of column names. If none given, returns all columns
-        /// </summary>
-        /// <param name="columns">The params string array of columns for the new table, none given returns all</param>
-        /// <returns>The resulting table</returns>
-        public TextualTable Select(params string[] columns)
+
+        public void Serialize(StringBuilder sb)
         {
-            if (columns.Length == 0)
-                return this;
+            // name:
+            sb.AppendFormat("{0}:\n", Name);
 
-            TextualTable ret = new TextualTable(Name, columns);
+            // | column1 | column2 | column3 |
+            sb.Append("|");
+            foreach (var column in Columns)
+                sb.AppendFormat(" {0} |", column);
+            sb.Append('\n');
 
-            foreach (var row in Rows)
+            if (Rows.Count > 0)
             {
-                var row_ = new TextualRow(ret);
-                foreach (string column in columns)
-                {
-                    if (!row.Values.ContainsKey(column))
-                        throw new ColumnNotFoundException(column, this);
-                    row_.AddValue(column, row.Values[column]);
-                }
-                ret.AddRow(row_);
-            }
+                // --------------------------
+                int firstLineLength = Rows[0].CalculateLineLength();
+                for (int i = 0; i < firstLineLength; i++)
+                    sb.Append('-');
+                sb.AppendLine();
 
-            return ret;
+                foreach (var row in Rows)
+                {
+                    // | "val1" | 2 | "val3" |
+                    row.Serialize(sb);
+                    int rowLength = row.CalculateLineLength();
+                    // ---------------------------
+                    for (int i = 0; i < rowLength; i++)
+                        sb.Append('-');
+                    sb.Append('\n');
+                }
+            }
+            // ?
+            sb.Append("?\n");
         }
-        /// <summary>
-        /// Serializes the table and returns the string value
-        /// </summary>
-        /// <returns>The string representation of the table</returns>
+
         public override string ToString()
         {
-            MemoryStream mstream = new MemoryStream();
-
-            new TextualSerializer().SerializeDatabase(mstream, new TextualDatabase(string.Empty, new Dictionary<string, TextualTable> { { Name, this } }));
-
-            return ASCIIEncoding.ASCII.GetString(mstream.ToArray());
+            StringBuilder sb = new StringBuilder();
+            Serialize(sb);
+            return sb.ToString();
         }
     }
 }
