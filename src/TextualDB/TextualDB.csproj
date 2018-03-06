@@ -61,6 +61,7 @@
     <Compile Include="Components\Operations\TextualInsertOperation.cs" />
     <Compile Include="Components\Operations\TextualOperation.cs" />
     <Compile Include="Components\Operations\TextualRenameColumnOperation.cs" />
+    <Compile Include="Components\Operations\TextualRenameTableOperation.cs" />
     <Compile Include="Components\Operations\TextualSelectOperation.cs" />
     <Compile Include="Components\Operations\TextualUpdateOperation.cs" />
     <Compile Include="Components\Operations\TextualWhereCondition.cs" />

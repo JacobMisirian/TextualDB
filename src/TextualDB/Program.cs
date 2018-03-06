@@ -24,12 +24,14 @@ namespace TextualDB
                 TextualDatabase db = new Parser(tokens).ParseDatabase(args[0]);
 
                 // SELECT first FROM people;
-                TextualSelectOperation select = new TextualSelectOperation(db, db.GetTable("people"), "first");
+                TextualSelectOperation select = new TextualSelectOperation(db.GetTable("people"), "first");
                 select.Execute();
                 Console.WriteLine(select.Result.ToString());
 
                 // SELECT age FROM people WHERE age > 18;
+                select = new TextualSelectOperation(db.GetTable("people"), "first");
                 select.FilterWhereExclusive(new TextualWhereCondition(WhereOperation.GreaterThan, "age", 18));
+                select.Execute();
                 Console.WriteLine(select.Result.ToString());
 
                 // INSERT INTO people AT 1 VALUES last="Foreman", first="Ben";
@@ -52,7 +54,7 @@ namespace TextualDB
                 // DELETE ROW FROM people WHERE age < 19
                 TextualDeleteRowOperation deleteRow = new TextualDeleteRowOperation(db.GetTable("people"));
                 deleteRow.FilterWhereInclusive(new TextualWhereCondition(WhereOperation.LesserThan, "age", 19));
-                deleteRow.Execute();
+              //  deleteRow.Execute();
                 Console.WriteLine(db.GetTable("people"));
 
                 // RENAME COLUMN first TO firstName IN people
@@ -60,8 +62,18 @@ namespace TextualDB
                 renameColumn.Execute("first", "firstName");
                 Console.WriteLine(db.GetTable("people"));
 
+                // RENAME TABLE people TO snakes
+                TextualRenameTableOperation renameTable = new TextualRenameTableOperation(db.GetTable("people"));
+                renameTable.Execute("snakes");
+                Console.WriteLine(db.GetTable("snakes"));
+
+                select = new TextualSelectOperation(db.GetTable("snakes"), "firstName");
+                select.FilterWhereExclusive(1);
+                select.Execute();
+                Console.WriteLine(select.Result);
+
                 // SELECT * FROM people;
-                Console.WriteLine(db.GetTable("people"));
+                Console.WriteLine(db.GetTable("snakes"));
                 
             }
             catch (UnknownCharacterException e)

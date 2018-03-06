@@ -56,19 +56,6 @@ namespace TextualDB.Components
             return Rows[index];
         }
 
-        public void RenameColumn(string oldName, string newName)
-        {
-            if (!Columns.Contains(oldName))
-                throw new ColumnNotFoundException(ParentDatabase, this, oldName);
-            if (Columns.Contains(newName))
-                throw new ColumnAlreadyExistsException(ParentDatabase, this, newName);
-
-            Columns[Columns.IndexOf(oldName)] = newName;
-
-            foreach (var row in Rows)
-                row.RenameColumn(oldName, newName);
-        }
-
         public void RemoveColumn(int index)
         {
             if (index < 0 || index >= Columns.Count)
@@ -95,6 +82,27 @@ namespace TextualDB.Components
             if (!Rows.Contains(row))
                 throw new RowNotFoundException(ParentDatabase, this, row);
             Rows.Remove(row);
+        }
+
+        public void Rename(string newName)
+        {
+            var tmp = ParentDatabase.Tables[Name];
+            ParentDatabase.RemoveTable(Name);
+            Name = newName;
+            ParentDatabase.AddTable(this);
+        }
+
+        public void RenameColumn(string oldName, string newName)
+        {
+            if (!Columns.Contains(oldName))
+                throw new ColumnNotFoundException(ParentDatabase, this, oldName);
+            if (Columns.Contains(newName))
+                throw new ColumnAlreadyExistsException(ParentDatabase, this, newName);
+
+            Columns[Columns.IndexOf(oldName)] = newName;
+
+            foreach (var row in Rows)
+                row.RenameColumn(oldName, newName);
         }
 
         public void Serialize(StringBuilder sb)

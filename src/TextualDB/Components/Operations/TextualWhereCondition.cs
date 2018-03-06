@@ -22,7 +22,8 @@ namespace TextualDB.Components.Operations
         {
             var val = row.GetValue(Column);
 
-            if (WhereOperation != WhereOperation.Equal && WhereOperation != WhereOperation.NotEqual)
+            if (WhereOperation != WhereOperation.Equal && WhereOperation != WhereOperation.NotEqual
+                && WhereOperation != WhereOperation.Any && WhereOperation != WhereOperation.Contains)
             {
                 try
                 {
@@ -37,6 +38,10 @@ namespace TextualDB.Components.Operations
 
             switch (WhereOperation)
             {
+                case WhereOperation.Any:
+                    return true;
+                case WhereOperation.Contains:
+                    return val.ToString().Contains(Value.ToString());
                 case WhereOperation.Equal:
                     return val.ToString() == Value.ToString();
                 case WhereOperation.GreaterThan:
@@ -57,6 +62,8 @@ namespace TextualDB.Components.Operations
 
     public enum WhereOperation
     {
+        Any,
+        Contains,
         Equal,
         GreaterThan,
         GreaterThanOrEqual,

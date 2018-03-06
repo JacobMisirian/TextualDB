@@ -14,7 +14,7 @@
         {
             TextualDatabase = database;
 
-            message = string.Format(MESSAGE_FORMAT, tableName);
+            message = string.Format(MESSAGE_FORMAT, database.Name, tableName);
         }
     }
 }
