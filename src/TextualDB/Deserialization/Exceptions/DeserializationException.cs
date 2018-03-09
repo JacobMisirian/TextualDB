@@ -2,7 +2,7 @@
 
 namespace TextualDB.Deserialization.Exceptions
 {
-    public abstract class DeserializerException : Exception
+    public abstract class DeserializationException : Exception
     {
         public abstract SourceLocation SourceLocation { get; }
     }

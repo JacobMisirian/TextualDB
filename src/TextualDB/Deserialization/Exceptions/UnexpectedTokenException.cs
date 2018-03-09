@@ -2,7 +2,7 @@
 
 namespace TextualDB.Deserialization.Exceptions
 {
-    public class UnexpectedTokenException : DeserializerException   
+    public class UnexpectedTokenException : DeserializationException   
     {
         public override SourceLocation SourceLocation { get; }
 

@@ -1,11 +1,11 @@
-﻿namespace TextualDB.Deserialization.Exceptions
+﻿namespace TextualDB.CommandLine.Exceptions
 {
-    public class UnknownEscapeCodeException : DeserializationException
+    public class UnknownEscapeCodeException : CommandLineException
     {
         public override SourceLocation SourceLocation { get; }
 
-        public new string Message {  get { return message; } }
-        
+        public new string Message { get { return message; } }
+
         private const string MESSAGE_FORMAT = "Unknown escape code \"{0}\"!";
         private string message;
 

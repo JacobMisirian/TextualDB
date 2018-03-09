@@ -67,8 +67,10 @@ namespace TextualDB
                 renameTable.Execute("snakes");
                 Console.WriteLine(db.GetTable("snakes"));
 
+                // SELECT firstName FROM snakes AT 1
                 select = new TextualSelectOperation(db.GetTable("snakes"), "firstName");
                 select.FilterWhereExclusive(1);
+                select.FilterWhereInclusive(0);
                 select.Execute();
                 Console.WriteLine(select.Result);
 
@@ -80,7 +82,7 @@ namespace TextualDB
             {
                 Console.WriteLine(e.Message);
             }
-            catch (DeserializerException de)
+            catch (DeserializationException de)
             {
                 Console.WriteLine(de.ToString());
             }
