@@ -23,7 +23,7 @@ namespace TextualDB.Components
         public TextualRow(TextualRow copy, TextualTable newParent = null)
         {
             ParentTable = newParent ?? copy.ParentTable;
-            Values = copy.Values;
+            Values = new Dictionary<string, object>(copy.Values);
         }
 
         public int CalculateLineLength()

@@ -37,6 +37,12 @@ namespace TextualDB.CommandLine.Lexer
                         case '"':
                             result.Add(scanString());
                             break;
+                        case ',':
+                            result.Add(new Token(location, TokenType.Comma, readCharAsString()));
+                            break;
+                        case '*':
+                            result.Add(new Token(location, TokenType.Identifier, readCharAsString()));
+                            break;
                         case ';':
                             result.Add(new Token(location, TokenType.Semicolon, readCharAsString()));
                             break;
@@ -100,6 +106,8 @@ namespace TextualDB.CommandLine.Lexer
             catch
             {
                 if (id.ToUpper() == "CONTAINS")
+                    return new Token(location, TokenType.Comparison, id);
+                else if (id.ToUpper() == "AND" || id.ToUpper() == "OR")
                     return new Token(location, TokenType.Comparison, id);
                 return new Token(location, TokenType.Identifier, id);
             }

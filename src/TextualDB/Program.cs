@@ -22,6 +22,8 @@ namespace TextualDB
                 var tokens = new Scanner(source).Scan();
 
                 TextualDatabase db = new Parser(tokens).ParseDatabase(args[0]);
+                
+                TextualDB.CommandLine.UI.TestCommandPrompt(db);
 
                 // SELECT first FROM people;
                 TextualSelectOperation select = new TextualSelectOperation(db.GetTable("people"), "first");
@@ -67,7 +69,7 @@ namespace TextualDB
                 renameTable.Execute("snakes");
                 Console.WriteLine(db.GetTable("snakes"));
 
-                // SELECT firstName FROM snakes AT 1
+                // SELECT firstName FROM snakes AT 1, 0
                 select = new TextualSelectOperation(db.GetTable("snakes"), "firstName");
                 select.FilterWhereExclusive(1);
                 select.FilterWhereInclusive(0);

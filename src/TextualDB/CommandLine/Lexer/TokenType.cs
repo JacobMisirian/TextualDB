@@ -2,6 +2,7 @@
 {
     public enum TokenType
     {
+        Conditional,
         Comma,
         Comparison,
         Identifier,

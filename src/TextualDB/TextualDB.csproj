@@ -43,12 +43,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLine\Exceptions\CommandLineException.cs" />
+    <Compile Include="CommandLine\Exceptions\ExpectedTokenException.cs" />
+    <Compile Include="CommandLine\Exceptions\UnexpectedTokenException.cs" />
     <Compile Include="CommandLine\Exceptions\UnknownCharacterException.cs" />
     <Compile Include="CommandLine\Exceptions\UnknownEscapeCodeException.cs" />
     <Compile Include="CommandLine\Lexer\Scanner.cs" />
     <Compile Include="CommandLine\Lexer\Token.cs" />
     <Compile Include="CommandLine\Lexer\TokenType.cs" />
+    <Compile Include="CommandLine\Parser\AST\AstNode.cs" />
+    <Compile Include="CommandLine\Parser\AST\IVisitor.cs" />
+    <Compile Include="CommandLine\Parser\Parser.cs" />
     <Compile Include="CommandLine\SourceLocation.cs" />
+    <Compile Include="CommandLine\UI.cs" />
     <Compile Include="Components\Exceptions\ColumnAlreadyExistsException.cs" />
     <Compile Include="Components\Exceptions\ColumnIndexOutOfBoundsException.cs" />
     <Compile Include="Components\Exceptions\ColumnNotFoundException.cs" />
@@ -60,6 +66,7 @@
     <Compile Include="Components\Operations\Exceptions\ColumnValueCountMismatchException.cs" />
     <Compile Include="Components\Operations\Exceptions\IncorrectValueFormatException.cs" />
     <Compile Include="Components\Operations\Exceptions\OperationException.cs" />
+    <Compile Include="Components\Operations\Exceptions\UnknownWhereOperationException.cs" />
     <Compile Include="Components\Operations\TextualCreateColumnOperation.cs" />
     <Compile Include="Components\Operations\TextualCreateTableOperation.cs" />
     <Compile Include="Components\Operations\TextualDeleteColumnOperation.cs" />

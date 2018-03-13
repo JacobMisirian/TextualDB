@@ -55,7 +55,32 @@ namespace TextualDB.Components.Operations
                 case WhereOperation.NotEqual:
                     return val.ToString() != Value.ToString();
                 default:
-                    return false;
+                    throw new UnknownWhereOperationException(op, (int)WhereOperation);
+            }
+        }
+
+        public static WhereOperation ParseWhereOperation(TextualOperation operation, string op)
+        {
+            switch (op)
+            {
+                case "*":
+                    return WhereOperation.Any;
+                case "CONTAINS":
+                    return WhereOperation.Contains;
+                case "=":
+                    return WhereOperation.Equal;
+                case ">":
+                    return WhereOperation.GreaterThan;
+                case ">=":
+                    return WhereOperation.GreaterThanOrEqual;
+                case "<":
+                    return WhereOperation.LesserThan;
+                case "<=":
+                    return WhereOperation.LesserThanOrEqual;
+                case "!=":
+                    return WhereOperation.NotEqual;
+                default:
+                    throw new UnknownWhereOperationException(operation, op);
             }
         }
     }

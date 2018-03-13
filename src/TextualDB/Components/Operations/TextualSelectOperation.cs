@@ -5,10 +5,8 @@ namespace TextualDB.Components.Operations
     public class TextualSelectOperation : TextualOperation
     {
         public override TextualTable Result { get; }
-        
-        private TextualTable table;
 
-        private List<TextualRow> mirroredSourceRows;
+        private TextualTable table;
 
         public TextualSelectOperation(TextualTable table, params string[] columns)
         {
@@ -20,59 +18,48 @@ namespace TextualDB.Components.Operations
 
             foreach (var column in columns)
                 Result.AddColumn(column);
-
-            mirroredSourceRows = new List<TextualRow>();
+            foreach (var srcRow in table.Rows)
+                Result.AddRow(srcRow);
         }
 
         public void Execute()
         {
-            if (mirroredSourceRows.Count == 0)
-                foreach (var srcRow in table.Rows)
-                    Result.AddRow(prepareRow(srcRow));
-            foreach (var srcRow in mirroredSourceRows)
-                Result.AddRow(prepareRow(srcRow));
-
-            mirroredSourceRows = new List<TextualRow>();
-        }
-
-        private TextualRow prepareRow(TextualRow row)
-        {
-            TextualRow destRow = new TextualRow(Result);
-            foreach (var column in Result.Columns)
-                destRow.SetValue(column, row.GetValue(column));
-            return destRow;
-        }
-
-        public void FilterWhereExclusive(int index)
-        {
-            FilterWhereInclusive(index);
-            for (int i = 0; i < mirroredSourceRows.Count; i++)
+            for (int i = 0; i < Result.Rows.Count; i++)
             {
-                var srcRow = mirroredSourceRows[i];
-                if (table.Rows.IndexOf(srcRow) != index)
-                    mirroredSourceRows.Remove(srcRow);
+                var row = Result.Rows[i];
+                Result.Rows[i] = new TextualRow(row, Result);
+                Result.Rows[i].ValidateWithParent();
             }
+        }
+
+        public void FilterWhereExclusive(params int[] indices)
+        {
+            Result.Rows.Clear();
+            foreach (var index in indices)
+                Result.AddRow(table.GetRow(index));
         }
         public void FilterWhereExclusive(TextualWhereCondition condition)
         {
-            FilterWhereInclusive(condition);
-            for (int i = 0; i < mirroredSourceRows.Count; i++)
-            {
-                var srcRow = mirroredSourceRows[i];
-                if (!condition.Check(this, srcRow))
-                    mirroredSourceRows.Remove(srcRow);
-            }
+            for (int i = 0; i < Result.Rows.Count; i++)
+                if (!condition.Check(this, Result.GetRow(i)))
+                    Result.RemoveRow(i);
         }
-
-        public void FilterWhereInclusive(int index)
+        
+        public void FilterWhereInclusive(params int[] indices)
         {
-            mirroredSourceRows.Add(table.GetRow(index));
+            foreach (var index in indices)
+            {
+                var row = table.GetRow(index);
+                if (!Result.Rows.Contains(row))
+                    Result.AddRow(row);
+            }
         }
         public void FilterWhereInclusive(TextualWhereCondition condition)
         {
-            foreach (var srcRow in table.Rows)
-                if (condition.Check(this, srcRow))
-                    mirroredSourceRows.Add(srcRow);
+            foreach (var row in table.Rows)
+                if (!Result.Rows.Contains(row))
+                    if (condition.Check(this, row))
+                        Result.AddRow(row);
         }
     }
 }
