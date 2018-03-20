@@ -37,9 +37,9 @@ namespace TextualDB
                 Console.WriteLine(select.Result.ToString());
 
                 // INSERT INTO people AT 1 VALUES last="Foreman", first="Ben";
-                TextualInsertOperation insert = new TextualInsertOperation(db.GetTable("people"), 1);
+                TextualInsertOperation insert = new TextualInsertOperation(db.GetTable("people"));
                 insert.BuildRow("last", "Foreman").BuildRow("first", "Ben");
-                insert.Execute();
+                insert.Execute(1);
                 Console.WriteLine(insert.Result.ToString());
 
                 // UPDATE people VALUES age=17 WHERE first="Ben";

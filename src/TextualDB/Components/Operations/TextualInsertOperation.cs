@@ -5,17 +5,10 @@
         public override TextualTable Result { get { return table; }  }
 
         private TextualTable table;
-        private int location;
 
         public TextualInsertOperation(TextualTable table)
         {
             this.table = table;
-            location = -1;
-        }
-        public TextualInsertOperation(TextualTable table, int index)
-        {
-            this.table = table;
-            location = index;
         }
 
         private TextualRow row;
@@ -27,17 +20,23 @@
 
             return this;
         }
-
-        public void Execute()
+        
+        public void Execute(int index = -1)
         {
-            Execute(row);
+            if (row == null)
+                return;
+            if (index == -1)
+                Execute(row);
+            else
+                Execute(row, index);
         }
         public void Execute(TextualRow row)
         {
-            if (location == -1)
-                table.AddRow(new TextualRow(row, table));
-            else
-                table.AddRow(new TextualRow(row, table), location);
+            table.AddRow(row);
+        }
+        public void Execute(TextualRow row, int index)
+        {
+            table.AddRow(row, index);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace TextualDB.Components.Operations
 {
     public class TextualUpdateOperation : TextualOperation
     {
-        public override TextualTable Result => throw new NotImplementedException();
+        public override TextualTable Result { get; }
 
         private TextualTable table;
         private string[] columns;
@@ -30,6 +30,8 @@ namespace TextualDB.Components.Operations
 
             if (columns.Length != values.Length)
                 throw new ColumnValueCountMismatchException(this, columns.Length, values.Length);
+
+            Result = table;
         }
 
         public void Execute(int index)
@@ -58,7 +60,7 @@ namespace TextualDB.Components.Operations
         public void FilterWhereInclusive(TextualWhereCondition condition)
         {
             foreach (var srcRow in table.Rows)
-                if (condition.Check(this, srcRow))
+                if (condition.Check(this, srcRow) && !mirroredSourceRows.Contains(srcRow))
                     mirroredSourceRows.Add(srcRow);
         }
     }

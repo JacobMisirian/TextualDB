@@ -50,9 +50,7 @@
     <Compile Include="CommandLine\Lexer\Scanner.cs" />
     <Compile Include="CommandLine\Lexer\Token.cs" />
     <Compile Include="CommandLine\Lexer\TokenType.cs" />
-    <Compile Include="CommandLine\Parser\AST\AstNode.cs" />
-    <Compile Include="CommandLine\Parser\AST\IVisitor.cs" />
-    <Compile Include="CommandLine\Parser\Parser.cs" />
+    <Compile Include="CommandLine\Parser\OperationParser.cs" />
     <Compile Include="CommandLine\SourceLocation.cs" />
     <Compile Include="CommandLine\UI.cs" />
     <Compile Include="Components\Exceptions\ColumnAlreadyExistsException.cs" />

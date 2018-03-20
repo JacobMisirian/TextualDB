@@ -17,7 +17,7 @@ namespace TextualDB.CommandLine
                 Console.Write(">");
                 string line = Console.ReadLine();
                 var tokens = new Scanner(line).Scan();
-                var result = new Parser.Parser(database, tokens).Parse();
+                var result = new Parser.OperationParser(database, tokens).Parse();
                 if (result != null)
                     Console.WriteLine(result);
             }

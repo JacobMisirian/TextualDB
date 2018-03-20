@@ -4,7 +4,7 @@ namespace TextualDB.Components.Operations
 {
     public class TextualDeleteColumnOperation : TextualOperation
     {
-        public override TextualTable Result => throw new NotImplementedException();
+        public override TextualTable Result => null;
 
         private TextualTable table;
         

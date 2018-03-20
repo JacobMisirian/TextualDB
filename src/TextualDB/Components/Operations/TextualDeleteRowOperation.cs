@@ -7,7 +7,7 @@ namespace TextualDB.Components.Operations
 {
     public class TextualDeleteRowOperation : TextualOperation
     {
-        public override TextualTable Result => throw new NotImplementedException();
+        public override TextualTable Result { get; }
 
         private TextualTable table;
 
@@ -18,11 +18,13 @@ namespace TextualDB.Components.Operations
             this.table = table;
 
             mirroredSourceRows = new List<TextualRow>();
+
+            Result = table;
         }
 
         public void Execute(int index)
         {
-            table.RemoveColumn(index);
+            table.RemoveRow(index);
         }
         public void Execute()
         {
