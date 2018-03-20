@@ -49,6 +49,13 @@ namespace TextualDB.Components
             Rows.Insert(index, row);
         }
 
+        public string GetColumn(int index)
+        {
+            if (index < 0 || index >= Columns.Count)
+                throw new ColumnIndexOutOfBoundsException(ParentDatabase, this, index);
+            return Columns[index];
+        }
+
         public TextualRow GetRow(int index)
         {
             if (index < 0 || index >= Rows.Count)

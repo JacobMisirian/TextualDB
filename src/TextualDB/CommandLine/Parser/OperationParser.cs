@@ -7,7 +7,6 @@ using TextualDB.CommandLine.Exceptions;
 using TextualDB.CommandLine.Lexer;
 using TextualDB.Components;
 using TextualDB.Components.Operations;
-using TextualDB.Components.Exceptions;
 
 namespace TextualDB.CommandLine.Parser
 {
@@ -38,8 +37,12 @@ namespace TextualDB.CommandLine.Parser
                     return parseDelete();
                 case "INSERT":
                     return parseInsert();
+                case "RENAME":
+                    return parseRename();
                 case "SELECT":
                     return parseSelect();
+                case "SHOW":
+                    return parseShow();
                 case "UPDATE":
                     return parseUpdate();
             }
@@ -56,22 +59,6 @@ namespace TextualDB.CommandLine.Parser
                     return parseCreateColumn();
                 case "TABLE":
                     return parseCreateTable();
-            }
-            throw new UnexpectedTokenException(second);
-        }
-
-        private TextualTable parseDelete()
-        {
-            Token second = expectToken(TokenType.Identifier);
-            string cmd = second.Value;
-            switch (cmd.ToUpper())
-            {
-                case "COLUMN":
-                    return parseDeleteColumn();
-                case "ROW":
-                    return parseDeleteRow();
-                case "TABLE":
-                    return parseDeleteTable();    
             }
             throw new UnexpectedTokenException(second);
         }
@@ -111,6 +98,22 @@ namespace TextualDB.CommandLine.Parser
                 createColumn.Execute(column);
 
             return createTable.Result;
+        }
+
+        private TextualTable parseDelete()
+        {
+            Token second = expectToken(TokenType.Identifier);
+            string cmd = second.Value;
+            switch (cmd.ToUpper())
+            {
+                case "COLUMN":
+                    return parseDeleteColumn();
+                case "ROW":
+                    return parseDeleteRow();
+                case "TABLE":
+                    return parseDeleteTable();
+            }
+            throw new UnexpectedTokenException(second);
         }
 
         private TextualTable parseDeleteColumn()
@@ -224,6 +227,60 @@ namespace TextualDB.CommandLine.Parser
             return insert.Result;
         }
 
+        private TextualTable parseRename()
+        {
+            Token second = expectToken(TokenType.Identifier);
+            string cmd = second.Value;
+            switch (cmd.ToUpper())
+            {
+                case "COLUMN":
+                    return parseRenameColumn();
+                case "TABLE":
+                    return parseRenameTable();
+            }
+            throw new UnexpectedTokenException(tokens[position]);
+        }
+
+        private TextualTable parseRenameColumn()
+        {
+            string oldColumn = string.Empty;
+            int pos = -1;
+
+            // AT pos
+            if (acceptToken(TokenType.Identifier, "AT"))
+                pos = Convert.ToInt32(expectToken(TokenType.Number).Value);
+            // oldColumn
+            else
+                oldColumn = expectToken(TokenType.Identifier).Value;
+
+            // TO newColumn
+            expectToken(TokenType.Identifier, "TO");
+            string newColumn = expectToken(TokenType.Identifier).Value;
+
+            // IN table
+            expectToken(TokenType.Identifier, "IN");
+            string table = expectToken(TokenType.Identifier).Value;
+            TextualRenameColumnOperation renameColumn = new TextualRenameColumnOperation(database.GetTable(table));
+
+            if (pos != -1) oldColumn = database.GetTable(table).GetColumn(pos);
+
+            renameColumn.Execute(oldColumn, newColumn);
+
+            return renameColumn.Result;
+        }
+
+        private TextualTable parseRenameTable()
+        {
+            // oldTable TO newTable
+            string oldTable = expectToken(TokenType.Identifier).Value;
+            expectToken(TokenType.Identifier, "TO");
+            string newTable = expectToken(TokenType.Identifier).Value;
+
+            database.GetTable(oldTable).Rename(newTable);
+
+            return database.GetTable(newTable);
+        }
+
         private TextualTable parseSelect()
         {
             // column1, column2, ... FROM table
@@ -257,6 +314,64 @@ namespace TextualDB.CommandLine.Parser
             
             select.Execute();
             return select.Result;
+        }
+
+        private TextualTable parseShow()
+        {
+            Token second = expectToken(TokenType.Identifier);
+            string cmd = second.Value;
+            switch (cmd.ToUpper())
+            {
+                case "COLUMNS":
+                    return parseShowColumns();
+                case "TABLES":
+                    return parseShowTables();
+            }
+            throw new UnexpectedTokenException(second);
+        }
+
+        private TextualTable parseShowColumns()
+        {
+            // IN table
+            expectToken(TokenType.Identifier, "IN");
+            string table = expectToken(TokenType.Identifier).Value;
+
+            var result = new TextualTable(database, table);
+            result.AddColumn("column");
+
+            foreach (var column in database.GetTable(table).Columns)
+            {
+                var row = new TextualRow(result);
+                row.SetValueOrdered(column);
+                result.AddRow(row);
+            }
+
+            return result;
+        }
+
+        private TextualTable parseShowTables()
+        {
+            var result = new TextualTable(database, database.Name);
+            result.AddColumn("table");
+            result.AddColumn("columns");
+            result.AddColumn("rowCount");
+
+            foreach (var pair in database.Tables)
+            {
+                var row = new TextualRow(result);
+                row.SetValueOrdered(pair.Key);
+
+                var sb = new StringBuilder();
+                foreach (var column in pair.Value.Columns)
+                    sb.AppendFormat("{0} ", column);
+                row.SetValueOrdered(sb.ToString());
+
+                row.SetValueOrdered(pair.Value.Rows.Count);
+
+                result.AddRow(row);
+            }
+
+            return result;
         }
 
         private TextualTable parseUpdate()
