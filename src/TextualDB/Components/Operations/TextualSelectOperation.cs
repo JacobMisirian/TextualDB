@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace TextualDB.Components.Operations
+﻿namespace TextualDB.Components.Operations
 {
     public class TextualSelectOperation : TextualOperation
     {

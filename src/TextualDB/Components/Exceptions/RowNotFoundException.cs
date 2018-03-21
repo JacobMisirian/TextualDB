@@ -9,7 +9,7 @@ namespace TextualDB.Components.Exceptions
     {
         public override TextualDatabase TextualDatabase { get; }
 
-        public new string Message { get { return message; } }
+        public override string Message { get { return message; } }
         public TextualTable TextualTable { get; private set; }
         public TextualRow TextualRow { get; private set; }
 

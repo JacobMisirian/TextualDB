@@ -9,7 +9,7 @@ namespace TextualDB.CommandLine.Exceptions
     {
         public override SourceLocation SourceLocation { get; }
 
-        public new string Message { get { return message; } }
+        public override string Message { get { return message; } }
 
         private const string MESSAGE_FORMAT = "Unknown character \"{0}\"!";
         private string message;

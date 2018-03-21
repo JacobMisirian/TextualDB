@@ -6,7 +6,7 @@ namespace TextualDB.CommandLine.Exceptions
     {
         public override SourceLocation SourceLocation { get; }
 
-        public new string Message { get { return message; } }
+        public override string Message { get { return message; } }
 
         private const string MESSAGE_FORMAT_PRIMARY = "Expected token of type \"{0}\" with value \"{1}\"!";
         private const string MESSAGE_FORMAT_SECONDARY = "Expected token of type \"{0}\"!";

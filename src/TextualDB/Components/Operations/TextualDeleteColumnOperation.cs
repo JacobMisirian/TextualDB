@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TextualDB.Components.Operations
+﻿namespace TextualDB.Components.Operations
 {
     public class TextualDeleteColumnOperation : TextualOperation
     {

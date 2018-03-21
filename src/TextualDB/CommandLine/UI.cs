@@ -11,15 +11,29 @@ namespace TextualDB.CommandLine
     {
         public static void TestCommandPrompt(TextualDatabase database)
         {
-
             while (true)
             {
-                Console.Write(">");
-                string line = Console.ReadLine();
-                var tokens = new Scanner(line).Scan();
-                var result = new Parser.OperationParser(database, tokens).Parse();
-                if (result != null)
-                    Console.WriteLine(result);
+                try
+                {
+                    Console.Write(">");
+                    string line = Console.ReadLine();
+                    var tokens = new Scanner(line).Scan();
+                    var result = new Parser.OperationParser(database, tokens).Parse();
+                    if (result != null)
+                        Console.WriteLine(result);
+                }
+                catch (CommandLine.Exceptions.CommandLineException cle)
+                {
+                    Console.WriteLine(cle.Message);
+                }
+                catch (Components.Exceptions.ComponentException ce)
+                {
+                    Console.WriteLine(ce.Message);
+                }
+                catch (Components.Operations.Exceptions.OperationException oe)
+                {
+                    Console.WriteLine(oe.Message);
+                }
             }
         }
     }

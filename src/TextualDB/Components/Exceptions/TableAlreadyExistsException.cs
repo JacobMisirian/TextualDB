@@ -4,7 +4,7 @@
     {
         public override TextualDatabase TextualDatabase { get; }
 
-        public new string Message { get { return message; } }
+        public override string Message { get { return message; } }
 
         private const string MESSAGE_FORMAT = "The database \"{0}\" already contains a table named \"{1}\"!";
 

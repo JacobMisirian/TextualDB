@@ -4,7 +4,7 @@
     {
         public override TextualOperation TextualOperation { get; }
 
-        public new string Message { get {  return message; } }
+        public override string Message { get {  return message; } }
         public TextualTable TextualTable { get; private set; }
 
         private const string MESSAGE_FORMAT = "An attempted operation was made with an incorrect value format!";
