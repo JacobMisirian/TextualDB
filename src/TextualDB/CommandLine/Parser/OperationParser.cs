@@ -17,6 +17,15 @@ namespace TextualDB.CommandLine.Parser
         private int position;
 
         private bool endOfStream { get { return position >= tokens.Count; } }
+        private Token mostCurrentToken
+        {
+            get
+            {
+                if (endOfStream)
+                    return tokens[position - 1];
+                return tokens[position];
+            }
+        }
 
         public OperationParser(TextualDatabase database, List<Token> tokens)
         {
@@ -468,11 +477,11 @@ namespace TextualDB.CommandLine.Parser
 
         private bool matchToken(TokenType tokenType)
         {
-            return !endOfStream && tokens[position].TokenType == tokenType;
+            return !endOfStream && mostCurrentToken.TokenType == tokenType;
         }
         private bool matchToken(TokenType tokenType, string value)
         {
-            return !endOfStream && tokens[position].TokenType == tokenType && tokens[position].Value.ToUpper() == value.ToUpper();
+            return !endOfStream && mostCurrentToken.TokenType == tokenType && tokens[position].Value.ToUpper() == value.ToUpper();
         }
 
         private bool acceptToken(TokenType tokenType)
@@ -498,13 +507,13 @@ namespace TextualDB.CommandLine.Parser
         {
             if (matchToken(tokenType))
                 return tokens[position++];
-            throw new ExpectedTokenException(tokens[position].SourceLocation, tokenType);
+            throw new ExpectedTokenException(mostCurrentToken.SourceLocation, tokenType);
         }
         private Token expectToken(TokenType tokenType, string value)
         {
             if (matchToken(tokenType, value))
                 return tokens[position++];
-            throw new ExpectedTokenException(tokens[position].SourceLocation, tokenType, value);
+            throw new ExpectedTokenException(mostCurrentToken.SourceLocation, tokenType, value);
         }
     }
 }

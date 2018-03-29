@@ -53,6 +53,7 @@
     <Compile Include="CommandLine\Parser\OperationParser.cs" />
     <Compile Include="CommandLine\SourceLocation.cs" />
     <Compile Include="CommandLine\UI.cs" />
+    <Compile Include="CommandLine\UIState.cs" />
     <Compile Include="Components\Exceptions\ColumnAlreadyExistsException.cs" />
     <Compile Include="Components\Exceptions\ColumnIndexOutOfBoundsException.cs" />
     <Compile Include="Components\Exceptions\ColumnNotFoundException.cs" />

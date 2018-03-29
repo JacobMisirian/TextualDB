@@ -1,8 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 using TextualDB.Components.Exceptions;
+using TextualDB.Deserialization;
+using TextualDB.Deserialization.Exceptions;
+using TextualDB.Deserialization.Lexer;
+using TextualDB.Deserialization.Parser;
 using TextualDB.Serialization;
 
 namespace TextualDB.Components
@@ -39,10 +43,23 @@ namespace TextualDB.Components
             Tables.Remove(name);
         }
 
+        public void Save(string path)
+        {
+            StringBuilder sb = new StringBuilder();
+            Serialize(sb);
+            File.WriteAllText(path, sb.ToString());
+        }
+
         public void Serialize(StringBuilder sb)
         {
             foreach (var table in Tables.Values)
                 table.Serialize(sb);
+        }
+
+        public static TextualDatabase Parse(string name, string contents)
+        {
+            var tokens = new Scanner(contents).Scan();
+            return new Parser(tokens).ParseDatabase(name);
         }
     }
 }
